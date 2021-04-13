@@ -1,7 +1,7 @@
 const {Pool, Client} = require('pg')
 const secrets = require('../secrets')
 
-const {parseEmployees} = require('./employeeHandler')
+const {parseEmployees} = require('../entities/Employee')
 
 async function performTest1(){
     let finalres = null;
@@ -32,7 +32,7 @@ async function performTest2(){
 
         let res = await client.query('SELECT * from Employee');
         
-        console.log("received unparesd results = ", res);
+        console.log("received unparsed results = ", res);
 
         let parsedRes = parseEmployees(res)
 
