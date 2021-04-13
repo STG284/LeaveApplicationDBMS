@@ -1,6 +1,7 @@
 const {Pool, Client} = require('pg')
 const secrets = require('../secrets')
 
+const {parseEmployees} = require('./employeeHandler')
 
 async function performTest1(){
     let finalres = null;
@@ -29,10 +30,15 @@ async function performTest2(){
         )        
         await client.connect();
 
-        res = await client.query('SELECT * from Employee');
-        console.log("received results = ", res);
+        let res = await client.query('SELECT * from Employee');
+        
+        console.log("received unparesd results = ", res);
+
+        let parsedRes = parseEmployees(res)
+
+        console.log("received results = ", parsedRes);
         client.end();
-        finalres = res;
+        finalres = JSON.stringify(parsedRes);
     }catch(e){
         console.error("DBMS error", e);
         finalres = -1;
