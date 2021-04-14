@@ -10,7 +10,6 @@ console.error = function(...args) {
 };
 
 console.log = function(...args) {
-    actualLog("here")
     actualLog(...args.map(a => typeof a === 'string' ? a.blue.bgWhite : a));
 };
 

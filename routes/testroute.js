@@ -19,4 +19,8 @@ router.get("/3", async (req, res) => {
     res.send("test home page : " + res1)
 })
 
+router.get("/4", (req, res)=>{
+    res.send(`logged in as ${req.session.EID}`);
+})
+
 module.exports = router
