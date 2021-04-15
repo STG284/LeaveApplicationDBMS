@@ -78,7 +78,7 @@ CREATE TABLE Events (
 
 CREATE TABLE ApplicationRowLock (
   EID int PRIMARY KEY,
-  isLAPending bool
+  isLALocked bool
 );
 
 ALTER TABLE SpecialDesignation ADD FOREIGN KEY (EID) REFERENCES Employee (EID);
