@@ -1,5 +1,12 @@
--- Commands to create relations
+-- commands to delete all tables
+DROP SCHEMA public CASCADE;
 
+CREATE SCHEMA public;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO public;
+
+
+-- Commands to create relations
 CREATE TYPE Departments AS ENUM (
   'CSE',
   'EE',
@@ -41,31 +48,12 @@ CREATE TABLE SpecialDesignation (
   endDate timestamp NOT NULL
 );
 
-CREATE TABLE LeaveProgressNormal (
+CREATE TABLE LeaveRoute (
   LID int NOT NULL,
-  hodEID int NOT NULL,
-  deanEID int NOT NULL,
-  isHODApproved bool NOT NULL,
-  isDeanApproved bool NOT NULL,
-  PRIMARY KEY (LID, hodEID, deanEID)
-);
-
-CREATE TABLE LeaveProgressNormalRetrospective (
-  LID int NOT NULL,
-  hodEID int NOT NULL,
-  deanEID int NOT NULL,
-  directorEID int NOT NULL,
-  isHODApproved bool NOT NULL,
-  isDeanApproved bool NOT NULL,
-  isDirectorApproved bool NOT NULL,
-  PRIMARY KEY (LID, hodEID, deanEID, directorEID)
-);
-
-CREATE TABLE LeaveProgressSpecial (
-  LID int NOT NULL,
-  directorEID int NOT NULL,
-  isDirectorApproved bool NOT NULL,
-  PRIMARY KEY (LID, directorEID)
+  checkerEID int NOT NULL,
+  position int NOT NULL,
+  status LeaveStatus,
+  PRIMARY KEY (LID, checkerEID)
 );
 
 CREATE TABLE LeaveApplication (
@@ -88,35 +76,28 @@ CREATE TABLE Events (
   PRIMARY KEY (LID, byEID, time)
 );
 
+CREATE TABLE ApplicationRowLock (
+  EID int PRIMARY KEY,
+  isLAPending bool
+);
+
 ALTER TABLE SpecialDesignation ADD FOREIGN KEY (EID) REFERENCES Employee (EID);
 
-ALTER TABLE LeaveProgressNormal ADD FOREIGN KEY (LID) REFERENCES LeaveApplication (LID);
+ALTER TABLE LeaveRoute ADD FOREIGN KEY (LID) REFERENCES LeaveApplication (LID);
 
-ALTER TABLE LeaveProgressNormal ADD FOREIGN KEY (hodEID) REFERENCES LeaveApplication (LID);
-
-ALTER TABLE LeaveProgressNormal ADD FOREIGN KEY (deanEID) REFERENCES LeaveApplication (LID);
-
-ALTER TABLE LeaveProgressNormalRetrospective ADD FOREIGN KEY (LID) REFERENCES LeaveApplication (LID);
-
-ALTER TABLE LeaveProgressNormalRetrospective ADD FOREIGN KEY (hodEID) REFERENCES LeaveApplication (LID);
-
-ALTER TABLE LeaveProgressNormalRetrospective ADD FOREIGN KEY (deanEID) REFERENCES LeaveApplication (LID);
-
-ALTER TABLE LeaveProgressNormalRetrospective ADD FOREIGN KEY (directorEID) REFERENCES LeaveApplication (LID);
-
-ALTER TABLE LeaveProgressSpecial ADD FOREIGN KEY (LID) REFERENCES LeaveApplication (LID);
-
-ALTER TABLE LeaveProgressSpecial ADD FOREIGN KEY (directorEID) REFERENCES LeaveApplication (LID);
+ALTER TABLE LeaveRoute ADD FOREIGN KEY (checkerEID) REFERENCES Employee (EID);
 
 ALTER TABLE Events ADD FOREIGN KEY (LID) REFERENCES LeaveApplication (LID);
+
+ALTER TABLE ApplicationRowLock ADD FOREIGN KEY (EID) REFERENCES Employee (EID);
 
 ALTER TABLE LeaveApplication ADD FOREIGN KEY (EID) REFERENCES Employee (EID);
 
 ALTER TABLE Events ADD FOREIGN KEY (byEID) REFERENCES Employee (EID);
 
 
-COMMENT ON COLUMN SpecialDesignation.designation IS 'can be HOD or Dean';
+COMMENT ON COLUMN SpecialDesignation.designation IS 'can be HOD, Dean or Director';
 
-COMMENT ON COLUMN SpecialDesignation.type_or_dept IS 'can be one of DeanType or one of Departments';
+COMMENT ON COLUMN SpecialDesignation.type_or_dept IS 'can be Director, or one of DeanType or one of Departments';
 
 COMMENT ON COLUMN LeaveApplication.content IS 'this is the text written by the employee';
