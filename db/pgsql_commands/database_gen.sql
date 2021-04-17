@@ -27,9 +27,9 @@ CREATE TYPE LeaveStatus AS ENUM (
 );
 
 CREATE TYPE LeaveApplicationType AS ENUM (
-  'LPNormal',
-  'LPSpecial',
-  'LPRetrospective'
+  'Normal',
+  'Special',
+  'Retrospective'
 );
 
 CREATE TABLE Employee (
@@ -50,18 +50,18 @@ CREATE TABLE SpecialDesignation (
 
 CREATE TABLE LeaveRoute (
   LID int NOT NULL,
-  checkerEID int NOT NULL,
   position int NOT NULL,
-  status LeaveStatus,
-  PRIMARY KEY (LID, checkerEID)
+  checkerEID int NOT NULL,
+  isApproved bool,
+  PRIMARY KEY (LID, position)
 );
 
 CREATE TABLE LeaveApplication (
-  LID int PRIMARY KEY NOT NULL,
+  LID serial PRIMARY KEY NOT NULL,
   EID int NOT NULL,
-  dateOfApplication timestamp NOT NULL,
+  dateOfApplication timestamp NOT NULL DEFAULT (now()),
   type LeaveApplicationType NOT NULL,
-  status LeaveStatus NOT NULL,
+  status LeaveStatus NOT NULL DEFAULT 'pending',
   leaveStartDate timestamp NOT NULL,
   leaveEndDate timestamp NOT NULL,
   content varchar NOT NULL

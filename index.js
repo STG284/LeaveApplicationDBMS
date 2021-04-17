@@ -1,6 +1,6 @@
 const express = require('express');
 
-require('./preinit') // to add colors to console logging :)
+require('./utils/preinit') // to add colors to console logging :)
 
 
 const testroutes = require('./routes/testroute')
