@@ -1,6 +1,3 @@
--- IMP NOTE:
--- triggers are executed in alphabetical order!
-
 -- trigger to create entry in ApplicationLock when new employee is added:
 CREATE OR REPLACE FUNCTION applicationLockCreator()
 RETURNS TRIGGER AS $$
@@ -113,30 +110,14 @@ FOR EACH ROW EXECUTE PROCEDURE createRoute();
 CREATE OR REPLACE FUNCTION validateSpecialDesignation()
 RETURNS TRIGGER AS $$
     DECLARE 
-        duplicates int;
         countOfSpecialDesig int;
         maxStartDateForNewDesignation timestamp;
     BEGIN
-        RAISE INFO 'validateSpecialDesignation';
         -- Trivial constraint
         IF NEW.startDate > NEW.endDate THEN 
             RAISE EXCEPTION 'Error: End date should be after start date';
         END IF;
 
-        -- CONSTRAINT: to prevent duplicate inputs
-        SELECT count(*) FROM SpecialDesignation 
-            WHERE
-                eid = NEW.eid
-                AND designation = NEW.designation
-                AND type_or_dept = NEW.type_or_dept
-                AND startDate = NEW.startDate
-                AND endDate = NEW.endDate
-            INTO duplicates;
-        
-        IF duplicates > 0 THEN 
-            RAISE EXCEPTION 'Error: Entry already exists!';
-        END IF;
-        
         -- CONSTRAINT: An employee cannot have 2 special designations!
         SELECT count(*) FROM SpecialDesignation
             WHERE 
@@ -165,7 +146,7 @@ RETURNS TRIGGER AS $$
     END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger01_validateSpecialDesignationTrigger
+CREATE TRIGGER validateSpecialDesignationTrigger
 BEFORE INSERT ON SpecialDesignation
 FOR EACH ROW EXECUTE PROCEDURE validateSpecialDesignation();
 
@@ -176,7 +157,6 @@ FOR EACH ROW EXECUTE PROCEDURE validateSpecialDesignation();
 CREATE OR REPLACE FUNCTION decreasePendingDesignations()
 RETURNS TRIGGER AS $$
     BEGIN
-        RAISE INFO 'decreasePendingDesignations';
         UPDATE SpecialDesignation
         SET endDate = NEW.startDate
         WHERE
@@ -188,7 +168,6 @@ RETURNS TRIGGER AS $$
     END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger02_decreasePendingDesignationsTrigger
+CREATE TRIGGER decreasePendingDesignationsTrigger
 BEFORE INSERT ON SpecialDesignation
 FOR EACH ROW EXECUTE PROCEDURE decreasePendingDesignations();
-

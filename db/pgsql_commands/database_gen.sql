@@ -44,8 +44,8 @@ CREATE TABLE SpecialDesignation (
   EID int,
   designation varchar NOT NULL,
   type_or_dept varchar NOT NULL,
-  startDate timestamp NOT NULL,
-  endDate timestamp NOT NULL
+  startDate date NOT NULL,
+  endDate date NOT NULL
 );
 
 CREATE TABLE LeaveRoute (
@@ -59,11 +59,11 @@ CREATE TABLE LeaveRoute (
 CREATE TABLE LeaveApplication (
   LID serial PRIMARY KEY NOT NULL,
   EID int NOT NULL,
-  dateOfApplication timestamp NOT NULL DEFAULT (now()),
+  dateOfApplication date NOT NULL DEFAULT (now()),
   type LeaveApplicationType NOT NULL,
   status LeaveStatus NOT NULL DEFAULT 'pending',
-  leaveStartDate timestamp NOT NULL,
-  leaveEndDate timestamp NOT NULL,
+  leaveStartDate date NOT NULL,
+  leaveEndDate date NOT NULL,
   content varchar NOT NULL
 );
 
