@@ -35,68 +35,29 @@ RETURNS TRIGGER AS $$
         _EID int := NEW.EID;
         _type LeaveApplicationType := NEW.type;
 
-        hodEID int;
-        deanEID int;
-        directorEID int;
+        _deptName varchar;
 
     BEGIN
-        -- finding director
-        SELECT EID FROM SpecialDesignation 
-            WHERE designation = 'Director' 
-            AND startDate <= now() 
-            AND endDate > now()
-            INTO directorEID;
 
-        -- finding HOD
-        SELECT EID FROM SpecialDesignation 
-            WHERE designation = 'HOD' 
-            AND type_or_dept = (SELECT deptName::text FROM Employee WHERE EID = _EID)
-            AND startDate <= now() 
-            AND endDate > now()
-            INTO hodEID;
-
-        -- finding Dean
-        SELECT EID FROM SpecialDesignation 
-            WHERE designation = 'Dean' 
-            AND type_or_dept = 'DeanFacultyAffairs'
-            AND startDate <= now() 
-            AND endDate > now()
-            INTO deanEID;
-
+        SELECT deptName::text FROM Employee 
+            WHERE EID = _EID
+            INTO _deptName;
+        
         IF _type = 'Special'::LeaveApplicationType THEN
-            IF directorEID IS NULL THEN
-                RAISE EXCEPTION 'Failed to create New LeaveApplication because: No Director exists!';
-            END IF;
-
-            INSERT INTO LeaveRoute(LID, position, checkerEID) 
-                VALUES(_LID, 1, directorEID);
+            INSERT INTO LeaveRoute(LID, position, designation, type_or_dept)
+                VALUES(_LID, 1, 'Director', 'Director');
         ELSE
             IF _type = 'Retrospective'::LeaveApplicationType THEN
-                IF hodEID IS NULL THEN
-                    RAISE EXCEPTION 'Failed to create New LeaveApplication because: No HOD exists!';
-                END IF;
-                IF deanEID IS NULL THEN
-                    RAISE EXCEPTION 'Failed to create New LeaveApplication because: No Dean exists!';
-                END IF;
-                IF directorEID IS NULL THEN
-                    RAISE EXCEPTION 'Failed to create New LeaveApplication because: No Director exists!';
-                END IF;
-                INSERT INTO LeaveRoute(LID, position, checkerEID) 
+                INSERT INTO LeaveRoute(LID, position, designation, type_or_dept) 
                     VALUES
-                        (_LID, 1, hodEID),
-                        (_LID, 2, deanEID),
-                        (_LID, 3, directorEID);
+                        (_LID, 1, 'HOD', _deptName),
+                        (_LID, 2, 'Dean', 'DeanFacultyAffairs'),
+                        (_LID, 3, 'Director', 'Director');
             ELSE
-                IF hodEID IS NULL THEN
-                    RAISE EXCEPTION 'Failed to create New LeaveApplication because: No HOD exists!';
-                END IF;
-                IF deanEID IS NULL THEN
-                    RAISE EXCEPTION 'Failed to create New LeaveApplication because: No Dean exists!';
-                END IF;
-                INSERT INTO LeaveRoute(LID, position, checkerEID) 
+                INSERT INTO LeaveRoute(LID, position, designation, type_or_dept) 
                     VALUES
-                        (_LID, 1, hodEID),
-                        (_LID, 2, deanEID);
+                        (_LID, 1, 'HOD', _deptName),
+                        (_LID, 2, 'Dean', 'DeanFacultyAffairs');
             END IF;
         END IF;
         RETURN NEW;
@@ -116,10 +77,10 @@ RETURNS TRIGGER AS $$
         duplicates int;
         countOfSpecialDesig int;
         maxStartDateForNewDesignation timestamp;
+        department varchar;
     BEGIN
-        RAISE INFO 'validateSpecialDesignation';
         -- Trivial constraint
-        IF NEW.startDate > NEW.endDate THEN 
+        IF NEW.startDate >= NEW.endDate THEN 
             RAISE EXCEPTION 'Error: End date should be after start date';
         END IF;
 
@@ -135,6 +96,16 @@ RETURNS TRIGGER AS $$
         
         IF duplicates > 0 THEN 
             RAISE EXCEPTION 'Error: Entry already exists!';
+        END IF;
+
+        -- CONSTRAINT: Employee can't be HOD of different department
+        IF NEW.designation = 'HOD' THEN
+            SELECT deptName from Employee
+                WHERE eid = NEW.eid
+            INTO department;
+            IF NEW.type_or_dept <> department THEN
+                RAISE EXCEPTION 'Error: Faculty of % department can''t be HOD of % department',department, NEW.type_or_dept;
+            END IF;
         END IF;
         
         -- CONSTRAINT: An employee cannot have 2 special designations!
@@ -176,7 +147,6 @@ FOR EACH ROW EXECUTE PROCEDURE validateSpecialDesignation();
 CREATE OR REPLACE FUNCTION decreasePendingDesignations()
 RETURNS TRIGGER AS $$
     BEGIN
-        RAISE INFO 'decreasePendingDesignations';
         UPDATE SpecialDesignation
         SET endDate = NEW.startDate
         WHERE

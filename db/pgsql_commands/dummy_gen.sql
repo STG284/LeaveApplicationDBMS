@@ -1,4 +1,7 @@
 
+-- system profile: to system reject!
+INSERT INTO Employee(EID, name, deptName, leavesRemaining, penaltyLeaves) VALUES (-1, 'SYSTEM', 'CSE', 0, 0);
+
 -- Employee table Populator:
 INSERT INTO Employee(EID, name, deptName, leavesRemaining, penaltyLeaves) VALUES (1, 'Ram', 'CSE', 10, 0);
 INSERT INTO Employee(EID, name, deptName, leavesRemaining, penaltyLeaves) VALUES (2, 'Sham', 'CSE', 9, 0);

@@ -51,8 +51,9 @@ CREATE TABLE SpecialDesignation (
 CREATE TABLE LeaveRoute (
   LID int NOT NULL,
   position int NOT NULL,
-  checkerEID int NOT NULL,
-  isApproved bool,
+  designation varchar NOT NULL,
+  type_or_dept varchar NOT NULL,
+  isApproved bool DEFAULT FALSE NOT NULL,
   PRIMARY KEY (LID, position)
 );
 

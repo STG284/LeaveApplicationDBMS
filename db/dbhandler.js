@@ -77,18 +77,16 @@ async function createLeaveApplication(EID, content, startDate, endDate) {
         let dbmsRes = await client.query(`
             SELECT LID from LeaveApplication 
                 where EID = ${EID} 
-                and (status = 'pending' or status = 'rejected');
-        `);
+                and (status = 'pending' or status = 'rejected');`);
         
-        console.log("received dbmsRes: ", dbmsRes);
-        if(dbmsRes['rows'].length > 0){
+        // console.log("received dbmsRes: ", dbmsRes);
+        if(dbmsRes['rows'].length > 0)
             throw Error("Employee already has a pending/rejected Leave Application with LID:"+dbmsRes['rows'][0]['lid'])
-        }
 
         // Now, creating leave application:
 
-        let startDate_s = "2021-04-15 18:52:31.041565+05:30" //dateformat(startDate, Constants.TIME_STAMP_PGSQL_FORMAT)
-        let endDate_s = "2021-05-15 18:52:31.041565+05:30" //dateformat(endDate, Constants.TIME_STAMP_PGSQL_FORMAT)
+        let startDate_s = dateformat(startDate, Constants.DATE_PGSQL_FORMAT)
+        let endDate_s = dateformat(endDate, Constants.DATE_PGSQL_FORMAT)
         console.log("startDate_s: ", startDate_s, "endDate_s:", endDate_s)
 
         //check if user has special designation:
@@ -96,8 +94,7 @@ async function createLeaveApplication(EID, content, startDate, endDate) {
             SELECT * FROM SpecialDesignation 
                 WHERE EID = ${EID}
                 AND startDate < now()
-                AND endDate > now();
-        `)
+                AND endDate > now();`)
         
         let thisLAType = LeaveApplicationType.Normal; 
         
@@ -109,28 +106,12 @@ async function createLeaveApplication(EID, content, startDate, endDate) {
             // retrospective leave!
             thisLAType = LeaveApplicationType.Retrospective;
         }
-
-        // console.log("query:\n",`
-        // INSERT INTO LeaveApplication(EID, type, leaveStartDate, leaveEndDate, content)
-        //     Values(${EID}, '${thisLAType}', '${startDate_s}', '${endDate_s}', '${content}');
-        // `)
         
         let createLARes = await client.query(`
             INSERT INTO LeaveApplication(EID, type, leaveStartDate, leaveEndDate, content)
-                Values(${EID}, '${thisLAType}', '${startDate_s}', '${endDate_s}', '${content}') returning LID;
-        `);
+                Values(${EID}, '${thisLAType}', '${startDate_s}', '${endDate_s}', '${content}') returning LID;`);
 
         let lid = createLARes.rows[0]['lid']
-        console.log("lid:", lid)
-
-        console.log("createLARes : ", createLARes)
-
-        let dummyres = await client.query(`
-            Select * from LeaveApplication;`)
-
-        console.log("Test dummy\n: ", dummyres)
-
-        await sleep(30*1000)
 
         // resetting the lock for this user:
         await client.query(`
@@ -154,15 +135,28 @@ async function createLeaveApplication(EID, content, startDate, endDate) {
         console.log("Client released!")
     }
         
-        // SELECT count(*) from Employee 
-        //     where EID = _EID
-        //     and status <> 'pending' 
-        //     and status <> 'rejected' 
-        //     INTO countOfPendingLeaveApplications;
-        
-        // if (countOfPendingLeaveApplications > 0)
-        //     throw 'Employee already has a pending Leave Application LID=' || 
-        
+}
+
+async function addEvent(LID, byEID, content, newStatus) {
+    const client = await pool.connect()
+    try{
+        await client.query('BEGIN;')
+
+        await client.query(`
+            INSERT INTO Events(LID, byEID, time, content, newStatus)
+                VALUES(${LID}, ${byEID}, now(), '${content}', ${newStatus});
+        `)
+
+        await client.query('COMMIT;')
+    } catch (e) {
+        await client.query('ROLLBACK')
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    } finally {
+        //this block will be executed whatever maybe the case!, even if you return something in try or catch blocks!
+        client.release() 
+        console.log("Client released!")
+    }
 }
 
 module.exports = {
