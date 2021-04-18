@@ -34,7 +34,7 @@ async function performTest2(){
         
         console.log("received unparsed results = ", res);
 
-        let parsedRes = parseEmployees(res)
+        let parsedRes = parseEmployees(res['rows'])
 
         console.log("received results = ", parsedRes);
         client.end();

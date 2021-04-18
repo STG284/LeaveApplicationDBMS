@@ -2,8 +2,15 @@ const express = require('express')
 
 const dbtesters = require('../db/tester')
 const dbhandler = require('../db/dbhandler')
+const constants = require('../utils/constants')
 
 router = express.Router()
+
+// tests will alwayse return json type!
+router.use((req, res, next)=>{
+    res.header("Content-Type",'application/json');
+    next()
+})
 
 router.get("/1", async (req, res) => {
     let res1 = await dbtesters.performTest1()
@@ -24,7 +31,7 @@ router.get("/4", (req, res)=>{
     res.send(`logged in as ${req.session.EID}`);
 })
 
-router.get("/5", async (req, res)=>{
+router.get("/newLeaveA", async (req, res)=>{
     try {
         await dbhandler.createLeaveApplication(
             8, 
@@ -44,6 +51,84 @@ router.get("/5", async (req, res)=>{
     
 })
 
+router.get("/addApplicationEvent", async (req, res)=>{
+    try {
+        await dbhandler.addApplicationEvent(
+            1, 
+            10,
+            "Heavy load of work, sorry",
+            `'${constants.LeaveStatus.rejected}'`
+        )
+        res.send("Done !");    
+    } catch (error) {
+        res.status(500)
+            .send(JSON.stringify({
+                status: "error",
+                message: error.message
+            }, null, 4));
+    }  
+})
+
+router.get("/getMyLeaves/:eid", async (req, res)=>{
+    
+    try {
+        let leaves = await dbhandler.getMyLeaves(req.params.eid)
+        res.send(JSON.stringify(leaves, null, 4));    
+
+    } catch (error) {
+        res.status(500)
+            .send(JSON.stringify({
+                status: "error",
+                message: error.message,
+            }, null, 4));
+        console.error(error.stack);
+    }
+})
+
+
+router.get("/getLeaveRequests/:eid", async (req, res)=>{
+    
+    try {
+        let leaves = await dbhandler.getLeaveRequests(req.params.eid)
+        res.send(JSON.stringify(leaves, null, 4));    
+
+    } catch (error) {
+        res.status(500)
+            .send(JSON.stringify({
+                status: "error",
+                message: error.message,
+            }, null, 4));
+        console.error(error.stack);
+    }
+})
+
+
+router.get("/getApplicationEvents/:lid", async (req, res)=>{
+    
+    try {
+        let events = await dbhandler.getApplicationEvents(req.params.lid)
+        res.send(JSON.stringify(events, null, 4));    
+
+    } catch (error) {
+        res.status(500)
+            .send(JSON.stringify({
+                status: "error",
+                message: error.message,
+            }, null, 4));
+        console.error(error.stack);
+    }
+})
+
+router.get("/systemTerminateApplicationsIfRequired", async (req, res)=>{
+    try{
+        let terminateLIDs = await dbhandler.systemTerminateApplicationsIfRequired()
+        res.send(`Terminated ${terminateLIDs.length} LIDs:\n ${JSON.stringify(terminateLIDs)}`);
+    } catch(e){
+        console.log(e)
+        res.send("ERROR! :\n\n" + e.stack);
+    }
+})
+
 router.get("/testq", async (req, res)=>{
     console.log(new Date(), ", query: ", "'" + req.query.q + "'")
     try{
@@ -52,11 +137,9 @@ router.get("/testq", async (req, res)=>{
 
         let result = await dbhandler.executeTestQuery(req.query.q)
         console.log(result)
-        res.header("Content-Type",'application/json');
         res.send(JSON.stringify(result['rows'], null, 4));
     }catch(e){
         console.log(e)
-        res.header("Content-Type",'application/json');
         res.send("ERROR! :\n\n" + e.stack);
     }
         

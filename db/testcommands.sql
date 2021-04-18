@@ -165,11 +165,33 @@ RETURNS TRIGGER AS $$
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trigger01_validateEvent
-BEFORE INSERT ON Events
+BEFORE INSERT ON ApplicationEvent
 FOR EACH ROW EXECUTE PROCEDURE validateEvent();
 
-INSERT INTO Events(LID, byEID, time, content, newStatus)
+INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
     VALUES(1, 2, now(), 'nopes sorry', 'rejected');
 
 
 INSERT INTO SpecialDesignation(EID, designation, type_or_dept, startDate, endDate) VALUES (10, 'HOD', 'CSE', '2023-04-01', '2030-01-31');
+
+INSERT INTO SpecialDesignation(EID, designation, type_or_dept, startDate, endDate) 
+    VALUES (10, 'HOD', 'ME', '2021-04-18', '2025-10-01');
+
+
+CREATE OR REPLACE FUNCTION updateApplicationStatus()
+RETURNS TRIGGER AS $$
+    BEGIN
+        UPDATE LeaveApplication
+            SET status = NEW.newStatus
+            WHERE LID = NEW.LID;
+        RETURN NEW;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger01_updateApplicationStatus
+AFTER INSERT ON ApplicationEvent
+FOR EACH ROW EXECUTE PROCEDURE updateApplicationStatus();
+
+
+INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
+    VALUES(1, 10, now(), 'hod: not a valid reason', 'rejected');

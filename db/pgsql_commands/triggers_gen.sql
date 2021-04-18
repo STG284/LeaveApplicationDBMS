@@ -162,3 +162,86 @@ CREATE TRIGGER trigger02_decreasePendingDesignationsTrigger
 BEFORE INSERT ON SpecialDesignation
 FOR EACH ROW EXECUTE PROCEDURE decreasePendingDesignations();
 
+
+-- Before Trigger to validate new entry in ApplicationEvent
+CREATE OR REPLACE FUNCTION validateApplicationEvent()
+RETURNS TRIGGER AS $$
+    DECLARE
+        isChecker bool;
+        applicantEID int;
+        hodEID int;
+        deanEID int;
+        directorEID int;
+    BEGIN
+        -- finding applicant
+        SELECT EID FROM LeaveApplication 
+            WHERE LID = NEW.LID
+            INTO applicantEID;
+
+        -- finding director
+        SELECT EID FROM SpecialDesignation 
+            WHERE designation = 'Director' 
+            AND startDate <= now() 
+            AND endDate > now()
+            INTO directorEID;
+
+        -- finding HOD
+        SELECT EID FROM SpecialDesignation 
+            WHERE designation = 'HOD' 
+            AND type_or_dept = (SELECT deptName::text FROM Employee WHERE EID = applicantEID)
+            AND startDate <= now() 
+            AND endDate > now()
+            INTO hodEID;
+
+        -- finding Dean
+        SELECT EID FROM SpecialDesignation 
+            WHERE designation = 'Dean' 
+            AND type_or_dept = 'DeanFacultyAffairs'
+            AND startDate <= now() 
+            AND endDate > now()
+            INTO deanEID;
+
+        IF NEW.byEID <> applicantEID 
+            AND NEW.byEID <> hodEID 
+            AND NEW.byEID <> deanEID
+            AND NEW.byEID <> directorEID THEN
+            RAISE EXCEPTION 'Not authorised to set any event!';
+        END IF;
+
+        IF 
+            -- if person checker, status allowed are: 'approved', 'rejected', 'terminated'
+            --  applicant can only set as 'pending'
+            (applicantEID = NEW.byEID AND NEW.newStatus <> 'pending') 
+            OR (NEW.byEID <> applicantEID AND New.newStatus = 'pending')
+
+            -- systemTerminated reserved for system!
+            OR (NEW.byEID = -1 AND New.newStatus <> 'systemTerminated')
+            OR (NEW.byEID <> -1 AND New.newStatus = 'systemTerminated')
+        THEN
+            RAISE EXCEPTION 'Not authorised to set event "%" !', NEW.newStatus;
+        END IF;
+
+        RETURN NEW;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger01_validateApplicationEvent
+BEFORE INSERT ON ApplicationEvent
+FOR EACH ROW EXECUTE PROCEDURE validateApplicationEvent();
+
+
+-- After trigger to automatically update status in LeaveApplication as new ApplicationEvent is added
+CREATE OR REPLACE FUNCTION updateApplicationStatus()
+RETURNS TRIGGER AS $$
+    BEGIN
+        UPDATE LeaveApplication
+            SET status = NEW.newStatus
+            WHERE LID = NEW.LID;
+        RETURN NEW;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger01_updateApplicationStatus
+AFTER INSERT ON ApplicationEvent
+FOR EACH ROW EXECUTE PROCEDURE updateApplicationStatus();
+

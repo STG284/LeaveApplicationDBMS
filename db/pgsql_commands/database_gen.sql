@@ -68,10 +68,10 @@ CREATE TABLE LeaveApplication (
   content varchar NOT NULL
 );
 
-CREATE TABLE Events (
+CREATE TABLE ApplicationEvent (
   LID int NOT NULL,
   byEID int NOT NULL,
-  time timestamp NOT NULL,
+  time timestamp NOT NULL DEFAULT (now()),
   content varchar NOT NULL,
   newStatus LeaveStatus NOT NULL,
   PRIMARY KEY (LID, byEID, time)
@@ -88,13 +88,13 @@ ALTER TABLE LeaveRoute ADD FOREIGN KEY (LID) REFERENCES LeaveApplication (LID);
 
 ALTER TABLE LeaveRoute ADD FOREIGN KEY (checkerEID) REFERENCES Employee (EID);
 
-ALTER TABLE Events ADD FOREIGN KEY (LID) REFERENCES LeaveApplication (LID);
+ALTER TABLE ApplicationEvent ADD FOREIGN KEY (LID) REFERENCES LeaveApplication (LID);
 
 ALTER TABLE ApplicationRowLock ADD FOREIGN KEY (EID) REFERENCES Employee (EID);
 
 ALTER TABLE LeaveApplication ADD FOREIGN KEY (EID) REFERENCES Employee (EID);
 
-ALTER TABLE Events ADD FOREIGN KEY (byEID) REFERENCES Employee (EID);
+ALTER TABLE ApplicationEvent ADD FOREIGN KEY (byEID) REFERENCES Employee (EID);
 
 
 COMMENT ON COLUMN SpecialDesignation.designation IS 'can be HOD, Dean or Director';

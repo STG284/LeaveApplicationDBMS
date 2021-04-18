@@ -11,8 +11,7 @@ class Employee{
     }
 }
 
-function parseEmployees(pgsqlJson){
-    let rowJsonArray = pgsqlJson['rows'];
+function parseEmployees(rowJsonArray){
     let employeeArr = [];
     rowJsonArray.forEach(rowJson => {
         let e = new Employee(

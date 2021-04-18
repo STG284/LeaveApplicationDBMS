@@ -3,6 +3,10 @@ const secrets = require('../secrets')
 const Constants = require('../utils/constants')
 const dateformat = require("dateformat")
 const { LeaveApplicationType } = require('../utils/constants')
+const { parseLeaveApplications } = require('../entities/LeaveApplication')
+const { parseSpecialDesignations } = require('../entities/SpecialDesignation')
+const { parseApplicationEvents } = require('../entities/ApplicationEvent')
+const constants = require('../utils/constants')
 
 const pool = new Pool(
     secrets.pgsql
@@ -93,7 +97,7 @@ async function createLeaveApplication(EID, content, startDate, endDate) {
         let specialDesigRes = await client.query(`
             SELECT * FROM SpecialDesignation 
                 WHERE EID = ${EID}
-                AND startDate < now()
+                AND startDate <= now()
                 AND endDate > now();`)
         
         let thisLAType = LeaveApplicationType.Normal; 
@@ -137,25 +141,116 @@ async function createLeaveApplication(EID, content, startDate, endDate) {
         
 }
 
-async function addEvent(LID, byEID, content, newStatus) {
+async function addApplicationEvent(LID, byEID, content, newStatus) {
     const client = await pool.connect()
     try{
-        await client.query('BEGIN;')
-
-        await client.query(`
-            INSERT INTO Events(LID, byEID, time, content, newStatus)
-                VALUES(${LID}, ${byEID}, now(), '${content}', ${newStatus});
-        `)
-
-        await client.query('COMMIT;')
+        await pool.query(`
+            INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
+                VALUES(${LID}, ${byEID}, now(), '${content}', ${newStatus});`)
     } catch (e) {
-        await client.query('ROLLBACK')
         console.error(e.stack)
         throw(e) //rethrowing error to let the router catch and return error message
-    } finally {
-        //this block will be executed whatever maybe the case!, even if you return something in try or catch blocks!
-        client.release() 
-        console.log("Client released!")
+    }
+}
+
+async function getMyLeaves(EID) {
+
+    try{
+        let result = await pool.query(`
+            SELECT * from LeaveApplication
+                WHERE EID = ${EID};
+        `)
+        return parseLeaveApplications(result['rows'])
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    }
+}
+
+async function getAssignedSpecialDesignation(EID) {
+    try{
+        let result = await pool.query(`
+            SELECT * from SpecialDesignation
+                WHERE EID = ${EID}
+                    AND startDate <= now()
+                    AND endDate > now();`)
+        let specialDesigRes = parseSpecialDesignations(result['rows'])
+        
+        if(specialDesigRes.length > 1){
+            console.error("result = ", result)
+            throw Error("\n\nSomething is seriously wrong! " + EID + " has more than one valid specialdesignations!!")
+        }
+        return specialDesigRes.length==1? specialDesigRes[0] : null;
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    }
+}
+
+async function getLeaveRequests(EID) {
+    try{
+        let sd = await getAssignedSpecialDesignation(EID)
+        if (sd === null){
+            return [];
+        }
+        console.log("sd: ", sd)
+
+        let result = await pool.query(`
+            SELECT * FROM LeaveApplication
+            WHERE LID IN
+                (SELECT LID FROM LeaveRoute
+                    WHERE designation = '${sd.designation}'
+                        AND type_or_dept = '${sd.type_or_dept}'
+                );
+        `)
+        return parseLeaveApplications(result['rows'])
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    }  
+}
+
+async function getApplicationEvents(LID) {
+    try{
+        let result = await pool.query(`
+            SELECT * from ApplicationEvent
+                WHERE LID = ${LID};`)
+        return parseApplicationEvents(result['rows'])
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    }
+}
+
+// terminate all those applications for which start time has already pass 
+//      but they are still pending or rejected
+// returns LIDs of all the applications systemTerminated!
+// else throws error
+async function systemTerminateApplicationsIfRequired() {
+    const sysRejContent = ""
+    const sysRejbyEID = -1
+    const sysRejEvent = constants.LeaveStatus.systemTerminated;
+    try{
+        let result = await pool.query(`
+            SELECT LID FROM LeaveApplication
+                WHERE startDate <= now() 
+                    AND (status = 'pending' OR status = 'rejected');`);
+        
+        let allPromises = []
+        result['rows'].forEach(toTerminateLID => {
+            // not waiting for this to complete!
+            let apromise = 
+                pool.query(`
+                    INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
+                        VALUES(${toTerminateLID}, ${sysRejbyEID}, now(), '${sysRejContent}', ${sysRejEvent});`)
+            allPromises.push(apromise)
+        });
+        // waiting for all concurrent queries to complete
+        await Promise.all(allPromises)
+        return result['rows'] //returning LIDs
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
     }
 }
 
@@ -163,4 +258,9 @@ module.exports = {
     executeTestQuery: executeTestQuery,
     getCountOfEmployeesWithEid: getCountOfEmployeesWithEid,
     createLeaveApplication: createLeaveApplication,
+    addApplicationEvent: addApplicationEvent,
+    getMyLeaves: getMyLeaves,
+    getLeaveRequests: getLeaveRequests,
+    getApplicationEvents: getApplicationEvents,
+    systemTerminateApplicationsIfRequired: systemTerminateApplicationsIfRequired
 }
