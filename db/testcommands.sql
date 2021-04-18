@@ -169,7 +169,7 @@ BEFORE INSERT ON ApplicationEvent
 FOR EACH ROW EXECUTE PROCEDURE validateEvent();
 
 INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
-    VALUES(1, 2, now(), 'nopes sorry', 'rejected');
+    VALUES(2, 10, now(), 'nopes sorry', 'rejected');
 
 
 INSERT INTO SpecialDesignation(EID, designation, type_or_dept, startDate, endDate) VALUES (10, 'HOD', 'CSE', '2023-04-01', '2030-01-31');
@@ -195,3 +195,24 @@ FOR EACH ROW EXECUTE PROCEDURE updateApplicationStatus();
 
 INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
     VALUES(1, 10, now(), 'hod: not a valid reason', 'rejected');
+
+-- sample commands to test leave application:
+
+select * from SpecialDesignation;
+select * from LeaveApplication;
+select * from ApplicationEvent;
+select * from LeaveRoute;
+
+
+INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
+    VALUES(2, 10, now(), 'nopes sorry', 'rejected');
+
+INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
+    VALUES(2, 8, now(), 'please', 'pending');
+
+INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
+    VALUES(2, 10, now(), 'Alright', 'approved');
+
+
+INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
+    VALUES(3, 3, now(), 'Alright', 'approved');

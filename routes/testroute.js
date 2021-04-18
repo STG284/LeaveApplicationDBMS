@@ -34,9 +34,9 @@ router.get("/4", (req, res)=>{
 router.get("/newLeaveA", async (req, res)=>{
     try {
         await dbhandler.createLeaveApplication(
-            8, 
-            "I want some free time with kids :)", 
-            new Date(Date.parse("2021-04-15 18:52:31.041565+05:30")), 
+            4, 
+            "meri marzi", 
+            new Date(Date.parse("2021-05-15 18:52:31.041565+05:30")), 
             new Date(Date.parse("2021-05-17 18:52:31.041565+05:30"))
         )
         res.send("Done !");    
@@ -54,7 +54,7 @@ router.get("/newLeaveA", async (req, res)=>{
 router.get("/addApplicationEvent", async (req, res)=>{
     try {
         await dbhandler.addApplicationEvent(
-            1, 
+            2, 
             10,
             "Heavy load of work, sorry",
             `'${constants.LeaveStatus.rejected}'`

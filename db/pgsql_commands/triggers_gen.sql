@@ -15,7 +15,7 @@ AFTER INSERT ON Employee
 FOR EACH ROW EXECUTE PROCEDURE applicationLockCreator();
     
 
--- Trigger to create ROUTE when new aplication is added:
+-- Trigger to create only the first entry for the ROUTE when new aplication is added:
 --  if special_designation:
 --      find director
 --      create route: director
@@ -24,9 +24,9 @@ FOR EACH ROW EXECUTE PROCEDURE applicationLockCreator();
 --      find dean
 --      if restrospective:
 --          find director
---          create route: HOD->dean->director
+--          create route: HOD (->dean->director : will be created by updateApplicationStatus())
 --      else
---          create route: HOD->dean
+--          create route: HOD (->dean : will be created by updateApplicationStatus())
 
 CREATE OR REPLACE FUNCTION createRoute() 
 RETURNS TRIGGER AS $$
@@ -50,14 +50,14 @@ RETURNS TRIGGER AS $$
             IF _type = 'Retrospective'::LeaveApplicationType THEN
                 INSERT INTO LeaveRoute(LID, position, designation, type_or_dept) 
                     VALUES
-                        (_LID, 1, 'HOD', _deptName),
-                        (_LID, 2, 'Dean', 'DeanFacultyAffairs'),
-                        (_LID, 3, 'Director', 'Director');
+                        (_LID, 1, 'HOD', _deptName);
+                        -- (_LID, 2, 'Dean', 'DeanFacultyAffairs'),
+                        -- (_LID, 3, 'Director', 'Director');
             ELSE
                 INSERT INTO LeaveRoute(LID, position, designation, type_or_dept) 
                     VALUES
-                        (_LID, 1, 'HOD', _deptName),
-                        (_LID, 2, 'Dean', 'DeanFacultyAffairs');
+                        (_LID, 1, 'HOD', _deptName);
+                        -- (_LID, 2, 'Dean', 'DeanFacultyAffairs');
             END IF;
         END IF;
         RETURN NEW;
@@ -233,7 +233,66 @@ FOR EACH ROW EXECUTE PROCEDURE validateApplicationEvent();
 -- After trigger to automatically update status in LeaveApplication as new ApplicationEvent is added
 CREATE OR REPLACE FUNCTION updateApplicationStatus()
 RETURNS TRIGGER AS $$
+    DECLARE 
+        _leaveApplication LeaveApplication;
+        _curRoutePosition int; -- current route position
+        _nextLeaveRoute LeaveRoute;
     BEGIN
+        
+        -- addign new route if required!
+        IF NEW.newStatus = 'approved' THEN
+
+            -- update the status of last route:
+            UPDATE LeaveRoute
+                SET isApproved = TRUE
+                WHERE LID = NEW.LID 
+                    AND position = _curRoutePosition;
+
+            SELECT * FROM LeaveApplication 
+                WHERE LID = NEW.LID
+                INTO _leaveApplication;
+            
+            -- the last completed position in ApplicationRoute for this application
+            SELECT MAX(position) FROM LeaveRoute
+                WHERE LID = NEW.LID
+                INTO _curRoutePosition;
+            
+            CASE _curRoutePosition
+                WHEN 1 THEN
+                    IF _leaveApplication.type <> 'Special' THEN
+                        _nextLeaveRoute := (NEW.LID, 2, 'Dean', 'DeanFacultyAffairs', FALSE);
+                    END IF;
+                WHEN 2 THEN
+                    IF _leaveApplication.type = 'Retrospective' THEN
+                        _nextLeaveRoute := (NEW.LID, 3, 'Director', 'Director', FALSE);
+                    END IF;
+            END CASE;
+            
+            -- RAISE NOTICE '_nextLeaveRoute: % ', _nextLeaveRoute;
+            -- RAISE NOTICE '_nextLeaveRoute IS NULL: % ', _nextLeaveRoute IS NULL;
+            -- RAISE NOTICE '_nextLeaveRoute IS NOT NULL: % ', _nextLeaveRoute IS NOT NULL;
+
+            -- NOTE: evaluates to true only if all columns evaluates to true!
+            IF _nextLeaveRoute IS NOT NULL THEN
+
+                INSERT INTO LeaveRoute(LID, position, designation, type_or_dept, isApproved) 
+                    VALUES(_nextLeaveRoute.LID, 
+                            _nextLeaveRoute.position,
+                            _nextLeaveRoute.designation, 
+                            _nextLeaveRoute.type_or_dept,
+                            _nextLeaveRoute.isApproved);
+                
+                -- resetting the status to pending and returning!
+                UPDATE LeaveApplication
+                    SET status = 'pending'
+                    WHERE LID = NEW.LID;
+
+                RETURN NEW;
+
+            END IF;
+        END IF;
+
+        -- control reaches here only if no new route were added
         UPDATE LeaveApplication
             SET status = NEW.newStatus
             WHERE LID = NEW.LID;
