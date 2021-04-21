@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="css/header.css">
+
+    <!-- importing bootstrap and other things which are used everywhere: -->
+    <%- include('../partials/head'); %>
+
+        <title>Leave Application</title>
+</head>
+
+<header>
+    <%- include('../partials/header'); %>
+</header>
+
+<body>
+    <div class="MyContent">
+
+        <div class="container-fluid">
+            
+            <div class="row">
+                <%- include('../partials/anExpandedLeaveListItem', {
+                    leaveApplication: leaveApplication,
+                    prettyDate: prettyDate
+                }) %>
+            </div>  
+            
+            <% applicationEvents.forEach((anEvent)=>{ %>
+            <div class="row">
+                <%- include('../partials/anApplicationEventListItem', {
+                    applicationEvent: anEvent,
+                    prettyDate: prettyDate
+                }) %>
+            </div>
+            <% }) %>
+
+            <div class="row">
+                <%- include('../partials/aSendEventListItem', {
+                    employee: employee,
+                    prettyDate: prettyDate,
+                    canAddEvent: canAddEvent,
+                    isChecker: isChecker,
+                    leaveApplication: leaveApplication
+                }) %>
+            </div>
+            
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>

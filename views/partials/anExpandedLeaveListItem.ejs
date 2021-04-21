@@ -1,0 +1,49 @@
+<div class="col card shadow mx-2 my-4 border border-primary" style="background-color: lavender;">
+
+    <div class="row w-100" style="margin-bottom: 15px;">
+        <h5 class="card-header w-100">Leave ID: <%= leaveApplication.LID %> </h5>
+    </div>
+    
+    <div class="row" style="margin-bottom: 15px;">
+        <div class="col MyAutoTBMargin">From : <%= prettyDate( leaveApplication.leaveStartDate ) %></div>
+        <div class="col MyAutoTBMargin">To : <%= prettyDate( leaveApplication.leaveEndDate ) %> </div>
+    </div>
+    
+    <div class="row" style="margin-bottom: 15px;">
+        <div class="col MyAutoTBMargin">Status: 
+
+            <% 
+                let btnClass = 'btn-info'
+                switch(leaveApplication.status){
+                    case 'pending':
+                        btnClass = 'btn-warning'
+                        break;
+                    case 'approved':
+                        btnClass = 'btn-primary'
+                        break;
+                    case 'rejected':
+                        btnClass = 'btn-outline-danger'
+                        break;
+                    case 'terminated':
+                        btnClass = 'btn-danger'
+                        break;
+                    case 'systemTerminated':
+                        btnClass = 'btn-danger'
+                        break;
+                } 
+            %>
+            <button class="btn <%= btnClass %>"><%= leaveApplication.status.toUpperCase() %></button>
+
+        </div>
+        <div class="col MyAutoTBMargin">Applied on : <%= prettyDate( leaveApplication.dateOfApplication ) %>
+        </div>
+    </div>
+    
+    <div class="dropdown-divider bg-dark"></div>
+    <div class="row my-4 p-2" style="min-height: 60px;">
+        <div class="col"><%= leaveApplication.content %></div>
+    </div>
+
+    
+
+</div>

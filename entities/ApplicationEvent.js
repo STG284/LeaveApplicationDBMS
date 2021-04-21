@@ -1,8 +1,9 @@
 
 class ApplicationEvent{
-    constructor(LID, byEID, content, newStatus){
+    constructor(LID, byEID, time, content, newStatus){
         this.LID = LID
         this.byEID = byEID
+        this.time = time
         this.content = content
         this.newStatus = newStatus
     }
@@ -14,6 +15,7 @@ function parseApplicationEvents(rowJsonArray) {
         let e = new ApplicationEvent(
             rowJson['lid'],
             rowJson['byeid'],
+            rowJson['time'],
             rowJson['content'],
             rowJson['newstatus'],
         )

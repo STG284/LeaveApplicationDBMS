@@ -2,8 +2,11 @@ const dateFormat = require('dateformat')
 const constants = require('./constants')
 
 
-function prettyDate(aDate) {
-    return dateFormat(aDate, constants.DATE_FRONTEND_FORMAT)
+function prettyDate(aDate, showTime=false) {
+    if(showTime)
+        return dateFormat(aDate, constants.DATE_TIME_FRONTEND_FORMAT)
+    else
+        return dateFormat(aDate, constants.DATE_FRONTEND_FORMAT)
 }
 
 function handleGetError(res, error) {
@@ -13,7 +16,14 @@ function handleGetError(res, error) {
     console.error(error);
 }
 
+function sortApplicationEvents(applicationEvents) {
+    return applicationEvents.sort((e1, e2)=>{
+            return new Date(e1.date) - new Date(e2.date);
+        })
+}
+
 module.exports = {
     prettyDate: prettyDate,
-    handleGetError: handleGetError
+    handleGetError: handleGetError,
+    sortApplicationEvents: sortApplicationEvents
 }

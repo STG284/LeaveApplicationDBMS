@@ -22,6 +22,7 @@ employeeRouter.get("/MyProfile", async (req, res)=>{
     
 })
 
+// leaves which this user have taken
 employeeRouter.get("/MyLeaves", async (req, res)=>{
     try {
         
@@ -39,18 +40,23 @@ employeeRouter.get("/MyLeaves", async (req, res)=>{
     
 })
 
+// leave requests which this user has received
+employeeRouter.get("/MyLeaveRequests", async (req, res)=>{
 
-employeeRouter.get("/MyLeaves/:lid", async (req, res)=>{
+    try {
+        
+        let employee = await dbhandler.getEmployee(req.session.EID)
+        let leaveRequests = await dbhandler.getLeaveRequests(req.session.EID)
+        
+        res.render("./pages/myLeaves.ejs", {
+            employee: employee, myLeaves:leaveRequests,
+            prettyDate: prettyDate,
+        })
 
-    res.send("received: " + req.params.lid);
+    } catch (error) {
+        handleGetError(res, error)
+    }
 
-    // let employee = await dbhandler.getEmployee(req.session.EID)
-    // let myLeaves = await dbhandler.getMyLeaves(req.session.EID)
-    
-    // res.render("./pages/myLeaves.ejs", {
-    //     employee: employee, myLeaves:myLeaves,
-    //     prettyDate: prettyDate,
-    // })
 })
 
 

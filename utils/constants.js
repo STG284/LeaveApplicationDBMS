@@ -29,6 +29,7 @@ const LeaveApplicationType = {
 const TIME_STAMP_PGSQL_FORMAT = "yyyy-mm-dd HH:MM:ssp"
 const DATE_PGSQL_FORMAT = "yyyy-mm-dd"
 const DATE_FRONTEND_FORMAT = "dd-mm-yyyy"
+const DATE_TIME_FRONTEND_FORMAT = "dd-mm-yyyy HH:MM"
 
 module.exports = {
     Departments: Departments,
@@ -37,5 +38,6 @@ module.exports = {
     LeaveApplicationType: LeaveApplicationType,
     TIME_STAMP_PGSQL_FORMAT: TIME_STAMP_PGSQL_FORMAT,
     DATE_PGSQL_FORMAT: DATE_PGSQL_FORMAT,
-    DATE_FRONTEND_FORMAT: DATE_FRONTEND_FORMAT
+    DATE_FRONTEND_FORMAT: DATE_FRONTEND_FORMAT,
+    DATE_TIME_FRONTEND_FORMAT: DATE_TIME_FRONTEND_FORMAT
 }

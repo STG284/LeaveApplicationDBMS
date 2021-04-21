@@ -14,7 +14,7 @@ const secrets = require('./secrets');
 
 let app = express()
 
-console.log("__dirname : " + __dirname)
+// console.log("__dirname : " + __dirname)
 app.use(express.static(__dirname + '/public')); // static files
 
 app.use('*/css',express.static('public/css'));
@@ -44,6 +44,12 @@ app.use(express.urlencoded({
 // access test without login, so keeping above the login-check-middleware
 app.use("/test", testroutes)
 
+app.get("/logout", (req, res)=>{
+    req.session.EID = undefined
+    res.redirect("/")
+})
+
+
 app.use("/login", loginRoute)
 
 // redirect to login screen if not logged in!
@@ -65,13 +71,6 @@ app.get("/", (req, res)=>{
     }
     
 })
-
-
-app.get("/logout", (req, res)=>{
-    req.session.EID = undefined
-    res.redirect("/")
-})
-
 
 app.use("/employee", employeeRoute)
 

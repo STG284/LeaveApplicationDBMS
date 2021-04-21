@@ -1,0 +1,53 @@
+<!-- logic to decide whether to show add event functionality or not -->
+<% 
+    let reapplyform_display = 'unset';
+    let checkerform_display = 'unset';
+    let container_display = 'unset';
+
+    if(!canAddEvent){
+        reapplyform_display = 'none'
+        checkerform_display = 'none'
+        container_display = 'none'
+    }else{
+        if(isChecker){
+            reapplyform_display = 'none'
+            checkerform_display = 'unset'
+        }else{
+            reapplyform_display = 'unset'
+            checkerform_display = 'none'
+        }
+    }
+%>
+<div class="col card shadow mx-2 my-4" style="padding-bottom: 10px; display:<%=container_display%>;">
+
+    <div class="row w-100" style="margin-bottom: 5px;">
+        <h5 class="card-header w-100">By ID: <%= employee.EID %>
+        </h5>
+    </div>
+
+    <form style="display: <%= reapplyform_display %>;" method="POST" action="/leaves/<%=leaveApplication.LID%>/addEvent">
+        <div class="form-group">
+            <textarea type="text" class="form-control" name="content" id="content" placeholder="Enter comment/reason"
+                rows="4"></textarea>
+        </div>
+        <input type="hidden" name="newStatus" value="pending">
+        <button type="submit" class="btn btn-primary">Reapply</button>
+    </form>
+
+
+    <form style="display: <%= checkerform_display %>;" method="POST" action="/leaves/<%=leaveApplication.LID%>/addEvent">
+        <div class="form-group">
+            <textarea type="text" class="form-control" name="content" id="content" placeholder="Enter comment/reason"
+                rows="4"></textarea>
+
+            <label for="newStatus">Change status to</label>
+            <select class="form-control" id="newStatus" name="newStatus">
+                <option value="approved">approved</option>
+                <option value="rejected">rejected</option>
+                <option value="terminated">terminated</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>

@@ -159,7 +159,7 @@ async function addApplicationEvent(LID, byEID, content, newStatus) {
     try{
         await pool.query(`
             INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
-                VALUES(${LID}, ${byEID}, now(), '${content}', ${newStatus});`)
+                VALUES(${LID}, ${byEID}, now(), '${content}', '${newStatus}');`)
     } catch (e) {
         console.error(e.stack)
         throw(e) //rethrowing error to let the router catch and return error message
@@ -223,6 +223,19 @@ async function getLeaveRequests(EID) {
     }  
 }
 
+async function getLeaveApplication(LID) {
+    try{
+        let result = await pool.query(`
+            SELECT * from LeaveApplication
+                WHERE LID = ${LID};
+        `)
+        return parseLeaveApplications(result['rows'])[0]
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    }
+}
+
 async function getApplicationEvents(LID) {
     try{
         let result = await pool.query(`
@@ -232,6 +245,38 @@ async function getApplicationEvents(LID) {
     } catch (e) {
         console.error(e.stack)
         throw(e) //rethrowing error to let the router catch and return error message
+    }
+}
+
+async function isChecker(EID, LID) {
+    let allReq = await getLeaveRequests(EID);
+    // console.log("allReq: ", allReq)
+    
+    let _isChecker = false; // Note: applicant and any other person all are not checkers
+
+    allReq.forEach(aReq=>{
+        if(aReq.LID === LID) 
+            _isChecker = true;
+    });
+
+    return _isChecker
+}
+
+function canAddEvent(isChecker, currentStatus) {
+    if(isChecker){
+        switch (currentStatus) {
+            case Constants.LeaveStatus.pending:
+                return true;        
+            default:
+                return false;
+        }
+    }else{
+        switch (currentStatus) {
+            case Constants.LeaveStatus.rejected:
+                return true;
+            default:
+                return false;
+        }
     }
 }
 
@@ -274,7 +319,10 @@ module.exports = {
     addApplicationEvent: addApplicationEvent,
     getMyLeaves: getMyLeaves,
     getLeaveRequests: getLeaveRequests,
+    getLeaveApplication: getLeaveApplication,
     getApplicationEvents: getApplicationEvents,
     systemTerminateApplicationsIfRequired: systemTerminateApplicationsIfRequired,
-    getEmployee: getEmployee
+    getEmployee: getEmployee,
+    canAddEvent: canAddEvent,
+    isChecker: isChecker
 }
