@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- importing bootstrap and other things which are used everywhere: -->
+    <%- include('../partials/head'); %>
+
+        <link rel="stylesheet" type="text/css" href="/css/header.css">
+        <title>Login!</title>
+</head>
+
+<body style="height: 100vh;">
+
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="card p-4">
+                <h1 style="text-align: center;">
+                    AFL
+                </h1>
+                <div class="card-body">
+                    
+                    <!-- modified from https://mdbootstrap.com/docs/standard/forms/overview/ -->
+
+                         <form action="/login?next=<%= next %>" method="POST"> 
+
+                        <!-- Email input -->
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="loginForm_EID">Employee ID</label>
+                            <input type="text" name="eid" id="loginForm_EID" class="form-control" />
+                        </div>
+                
+                        <!-- Password input -->
+                        <div class="form-outline mb-4">
+                            <label class="form-label"  for="loginForm_password">Password</label>
+                            <input type="password" name="password" id="loginForm_password" class="form-control" />
+                        </div>
+                
+                        <!-- Submit button -->
+                        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+                    </form>
+
+                </div>
+                
+            </div>
+            
+        </div>
+    </div>
+</body>
+
+</html>

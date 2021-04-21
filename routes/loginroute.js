@@ -5,11 +5,17 @@ const loginRouter = express.Router()
 require('../db/dbhandler')
 
 loginRouter.get("/", (req, res)=>{
-    res.render("login.ejs")
+    if(req.query.next !== undefined && req.query.next !== null 
+        && req.query.next.length > 0)
+        res.render("./pages/login.ejs", {next:req.query.next})
+    else
+        res.render("./pages/login.ejs", {next:"/"})
 })
 
 loginRouter.post("/", async (req, res)=>{
+
     let eid = Number.parseInt(req.body.eid);
+
     console.log("loginroute: post_login: eid: ", eid, ", type: ", typeof eid);
     if(! Number.isInteger(Number(eid))){
         res.status(400).send({
@@ -23,10 +29,16 @@ loginRouter.post("/", async (req, res)=>{
         switch(countOfEmployees){
             case 1: 
                 req.session.EID = eid;
-                res.send({
-                    "status": "success",
-                    "messsage": ""
-                })
+                console.log("redirecting to: " + req.query.next)
+
+                if(req.query.next !== undefined && req.query.next !== null)
+                    res.redirect(req.query.next)
+                else
+                    res.redirect("/employee")
+                // res.send({
+                //     "status": "success",
+                //     "messsage": ""
+                // })
                 break;
             case 0: 
                 res.send({

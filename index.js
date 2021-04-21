@@ -5,13 +5,21 @@ require('./utils/preinit') // to add colors to console logging :)
 
 const testroutes = require('./routes/testroute')
 const loginRoute = require('./routes/loginroute');
+const employeeRoute = require('./routes/employeeRoute')
+const leavesRouter = require('./routes/leavesRoute');
+
 const session = require('express-session');
 const secrets = require('./secrets');
 
 
 let app = express()
 
-app.use(express.static('public')) // static files
+console.log("__dirname : " + __dirname)
+app.use(express.static(__dirname + '/public')); // static files
+
+app.use('*/css',express.static('public/css'));
+app.use('*/js',express.static('public/js'));
+app.use('*/images',express.static('public/images'));
 
 app.set('view engine', 'ejs'); // view engine
 
@@ -27,16 +35,47 @@ app.use(session({
     }
 }));
   
+
 app.use(express.urlencoded({
     extended: true
-})) // to enable parsing paramters from post requests
+})) // to enable parsing parameters from post requests
+
+
+// access test without login, so keeping above the login-check-middleware
+app.use("/test", testroutes)
 
 app.use("/login", loginRoute)
 
-app.use("/test", testroutes)
+// redirect to login screen if not logged in!
+app.use((req, res, next)=>{
+    console.log("recieved index.js here: " + req.url)
+    if(req.session.EID === undefined){
+        res.redirect("/login?next=" + req.url)
+    }else{
+        next()
+    }
+})
+
 
 app.get("/", (req, res)=>{
-    res.send("this is my home page");
+    if(req.session.EID === undefined){
+        res.redirect("/login")
+    }else{
+        res.redirect("/employee")
+    }
+    
 })
+
+
+app.get("/logout", (req, res)=>{
+    req.session.EID = undefined
+    res.redirect("/")
+})
+
+
+app.use("/employee", employeeRoute)
+
+app.use("/leaves", leavesRouter)
+
 
 app.listen(3001)

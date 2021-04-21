@@ -1,0 +1,37 @@
+:root{
+    --primaryColor: #007bff;
+    --secondaryColor: white;
+}
+
+
+.MyLeftNavBar{
+    position: fixed!important;
+    left: 0px;
+    bottom: 0px;
+    top: 159px;
+    width: 25%;
+    height: 74%!important;
+}
+
+
+.MyTopNavBar{
+    position: fixed!important;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+}
+
+.MyContent{
+    margin-top: 156px;
+    height: 100%;
+    position: fixed;
+    left: 320px;
+    padding: 15px;
+    width: 75%;
+}
+
+.MyAutoTBMargin{
+    margin-top: auto;
+    margin-bottom: auto;
+}

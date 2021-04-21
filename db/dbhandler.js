@@ -7,6 +7,7 @@ const { parseLeaveApplications } = require('../entities/LeaveApplication')
 const { parseSpecialDesignations } = require('../entities/SpecialDesignation')
 const { parseApplicationEvents } = require('../entities/ApplicationEvent')
 const constants = require('../utils/constants')
+const { parseEmployees } = require('../entities/Employee')
 
 const pool = new Pool(
     secrets.pgsql
@@ -61,6 +62,18 @@ function sleep(ms) {
         setTimeout(resolve, ms);
     });
 }   
+
+async function getEmployee(EID) {
+    try{
+        let result = await pool.query(`
+            SELECT * FROM Employee
+            WHERE EID = ${EID};`)
+        return parseEmployees(result['rows'])[0]
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    }
+}
 
 async function createLeaveApplication(EID, content, startDate, endDate) {
     // startDate and endDate should be of type Date!
@@ -262,5 +275,6 @@ module.exports = {
     getMyLeaves: getMyLeaves,
     getLeaveRequests: getLeaveRequests,
     getApplicationEvents: getApplicationEvents,
-    systemTerminateApplicationsIfRequired: systemTerminateApplicationsIfRequired
+    systemTerminateApplicationsIfRequired: systemTerminateApplicationsIfRequired,
+    getEmployee: getEmployee
 }

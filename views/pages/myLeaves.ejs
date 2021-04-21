@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="css/header.css">
+
+    <!-- importing bootstrap and other things which are used everywhere: -->
+    <%- include('../partials/head'); %>
+
+        <title>My Leaves</title>
+</head>
+
+<header>
+    <%- include('../partials/header'); %>
+</header>
+
+<body>
+    <div class="MyContent">
+
+        <div class="container-fluid">
+            <div class="row">
+
+                <div class="col">
+
+                    <div class="row">
+                        <button type="button" class="btn btn-primary">New Leave Application</button>
+                    </div>
+
+                    <% myLeaves.forEach((aLeave)=>{ %>
+
+                        <%- include('../partials/aLeaveListItem', {
+                            leaveApplication: aLeave, 
+                            prettyDate: prettyDate
+                        }) %>
+                        
+                    <% }) %>
+
+                    <!-- <div class="row mx-2 my-4">
+
+                        <div class="col-10 card p-3 shadow">
+                            <div class="row" style="margin-bottom: 15px;">
+                                <div class="col MyAutoTBMargin">From :</div>
+                                <div class="col MyAutoTBMargin">To :</div>
+                            </div>
+                            <div class="row">
+                                <div class="col MyAutoTBMargin">Status: <button type="button" class="btn btn-danger">Rejected</button>
+                                </div>
+                                <div class="col MyAutoTBMargin">Applied on :</div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-1 btn shadow" style="background-color: orange;;">
+                            <a href="/test1">
+                                <div class="container d-flex h-100">
+                                    <div class="row justify-content-center align-self-center">
+
+                                        <div style=" margin-top: auto; margin-bottom: auto">
+                                            <img src="images/next.png" alt="next" style="width: 40px; height: 40px;">
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                    </div> -->
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>

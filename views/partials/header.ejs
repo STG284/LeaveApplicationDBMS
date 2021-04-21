@@ -1,0 +1,56 @@
+
+<nav class="navbar navbar-dark bg-primary MyTopNavBar">
+    <a class="navbar-brand" href="/">
+        <img src="images/logo.png" alt="log" style="height: 100px; width: 130px; ">
+        <span style="font-size: xx-large; font-style: italic; color: var(--secondaryColor);">
+            ApplyForLeave
+        </span>
+    </a>
+    <span class="card flex-row flex-wrap" style="height: 140px; padding-right: inherit; min-width: 26%;">
+        <img src="/images/profile.png" alt="" height="80px" width="95px">
+        <div class="card-block p-2">
+            <h4 class="card-title"><%= employee.name %></h4>
+            <p class="card-text"><%= employee.deptName %>, EID: <%= employee.EID %></p>
+            <a href="/logout" class="btn-sm btn-danger">Logout</a>
+        </div>
+        <!-- <div class="w-100"></div>
+        <div class="card-footer w-100 text-muted">
+            FOOTER
+        </div> -->
+    </span>
+<!--     
+    <div class="card" style="width: 18rem;">
+        <img src="images/profile.png" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+    </div> -->
+</nav>
+
+
+<nav class="navbar navbar-dark bg-primary MyLeftNavBar">
+                        
+    <div class="flex-column" id="navbarsExampleDefault">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="/employee/MyProfile">My Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/employee/MyLeaves">My Leaves</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link">Leave Requests</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link">All Leaves</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link">Designation Change</a>
+            </li>
+
+        </ul>
+        
+    </div>
+</nav>
