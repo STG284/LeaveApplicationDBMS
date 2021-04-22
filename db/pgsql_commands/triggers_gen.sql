@@ -230,9 +230,9 @@ RETURNS TRIGGER AS $$
                     WHERE LID = NEW.LID)
             INTO _previousState;
         
-        IF _previousState = New.newStatus THEN
-            RAISE EXCEPTION 'Cannot set state % again!', _previousState;
-        END IF;
+        -- IF _previousState = New.newStatus THEN
+        --     RAISE EXCEPTION 'Cannot set state % again!', _previousState;
+        -- END IF;
 
         RETURN NEW;
     END;
