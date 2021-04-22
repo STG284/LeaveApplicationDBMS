@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="css/header.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!-- importing bootstrap and other things which are used everywhere: -->
+    <%- include('../partials/head'); %>
+
+    <title>Employee</title>
+    
+    
+    <style>
+        th, tr, td{
+            text-align: center;
+        }
+
+        table.roundedCorners { 
+            border: 1px solid blue;
+            border-radius: 13px; 
+            border-spacing: 0;
+        }
+        table.roundedCorners td, 
+        table.roundedCorners th { 
+            border-bottom: 1px solid blue;
+            padding: 10px; 
+        }
+        table.roundedCorners tr:last-child > td {
+            border-bottom: none;
+        }
+    </style>
+
+
+</head>
+
+<header>
+    <%- include('../partials/header'); %>
+</header>
+
+<body class="">
+    <div class="container-fluid MyContent">
+
+        <div class="row" style="height: 10px;"></div>
+
+        <div class="col">
+            <h3>employee details</h3>
+            <!-- <br><br><br><br> -->
+            <% let str = "EID :" + employee.EID + "\n" + "name :" + employee.name + "\n" + "deptName :" + employee.deptName + "\n" + "leavesRemaining :" + employee.leavesRemaining + "\n" + "penaltyLeaves :" + employee.penaltyLeaves + "\n"; %>
+            <div>
+                <pre> <%= str %> </pre>
+            </div>
+            
+        </div>
+
+    </div>
+
+
+    <!-- Start -->
+    <div class="container">
+        <div class="card">
+        <table class="roundedCorners table table-hover table-striped" style="max-width: 600px;">
+            <thead>
+            <tr>
+                <th scope="col">Designation</th>
+                <th scope="col">Type / Department</th>
+                <th scope="col">EID</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>HOD</td>
+                <td>CSE</td>
+                <td>a</td>
+            </tr>
+            <tr>
+                <td>HOD</td>
+                <td>ME</td>
+                <td>a</td>
+            </tr>
+            <tr>
+                <td>Dean</td>
+                <td>Faculty Affairs</td>
+                <td>a</td>
+            </tr>
+            <tr>
+                <td>HOD</td>
+                <td>MMB</td>
+                <td>a</td>
+            </tr>
+            <tr>
+                <td>Dean</td>
+                <td>Research</td>
+                <td>a</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+        <form>
+            <div class="form-row align-items-center shadow">
+                <div class="col-auto my-1">
+                    <select style="min-height: 50px; background-color: #1a75ff; color: white; border-radius: 5px; margin-left: 1%; margin-right: 10%;" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                        <option selected style="padding: 5px;">Select Designation</option>
+                        <option value="1" style="background-color: white; color: #1a75ff;">Head Of Department (HOD)</option>
+                        <option value="2" style="background-color: white; color: #1a75ff;">Dean</option>
+                    </select>
+
+                    <select style="min-height: 50px; background-color: #1a75ff; color: white; border-radius: 5px;" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                        <option selected >Select Type / Department</option>
+                        <option value="1" style="background-color: white; color: #1a75ff;">Faculty Affairs</option>
+                        <option value="2" style="background-color: white; color: #1a75ff;">Research</option>
+                        <option value="2" style="background-color: white; color: #1a75ff;">Student Affairs</option>
+                        <option value="2" style="background-color: white; color: #1a75ff;">Academic Affairs</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+
+        <div class="col card shadow mx-2 my-4" style="padding-bottom: 10px; display:<%=container_display%>;">
+
+            <div class="row w-100" style="margin-bottom: 5px; margin-left: 3px;">
+                <h5 class="card-header w-100">Assign New Employee to Selected Designation   
+                </h5>
+            </div>        
+        
+            <form style="display: <%= checkerform_display %>;" method="POST" action="/leaves/<%=leaveApplication.LID%>/addEvent">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="content" id="content" placeholder="Enter EID for Employee you want to assign">
+                    
+                    <br>
+                    <label for="start"> Start Date : </label>
+                    <input name="start" type="date" style="border: 2px solid #1a75ff; border-radius: 4px;">
+
+                    <label for="endDate"> End Date : </label>
+                    <input name="endDate" type="date" style="border: 2px solid #1a75ff; border-radius: 4px;">
+                
+                </div>
+        
+                <button type="submit" class="btn btn-primary" style="background-color: #1a75ff;">Add / Change</button>
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- End -->
+
+    
+
+</body>
+
+</html>

@@ -5,9 +5,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" type="text/css" href="css/header.css">
-
+    
+    
+    <script type="text/javascript" src="js/newLeave.js"></script>
+    
     <!-- importing bootstrap and other things which are used everywhere: -->
     <%- include('../partials/head'); %>
 
@@ -20,21 +22,46 @@
 
 <body>
     <div class="MyContent">
-
         <div class="container-fluid">
             <div class="row">
-
                 <div class="col">
-
-                    add content here
                     
+                    
+                <div class="col card shadow mx-2 my-4" style="padding-bottom: 10px;">
+
+                    <div class="row w-100" style="margin-bottom: 5px;">
+                        <h5 class="card-header w-100">New Leave Application
+                        </h5>
+                    </div>
+
+                    <form method="POST" action="">
+                        <div class="form-group">
+                            <label for="startDateNew"> From :</label>
+                            <input id="startDateNew" type="date" style="margin: auto 15px;">
+                            <br><br>
+                            
+                            <label for="endDateNew"> Upto :</label>
+                            <input id="endDateNew" type="date"  style="margin: auto 15px;">
+                            <br><br>
+
+                            <h6>Number of Days : 
+                                <span id="num_days"></span>
+                            </h6>
+
+                            <!-- <input type="button" name="button" id="calc" value="Calculate" onclick="numberOfDays()"> -->
+                            <button type="button" onclick="daysDifference()" style="padding:1px; border: 1px solid; border-radius: 4px;"> Calculate no. of days</button> 
+                            
+                            <br><br>
+                            <textarea type="text" class="form-control" name="content" id="content" placeholder="Enter comment/reason"
+                                rows="4"></textarea>
+                        </div>
+                    </form>
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
-
             </div>
-
-
         </div>
-
+    </div>
     </div>
 
 

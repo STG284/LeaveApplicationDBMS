@@ -18,23 +18,119 @@
     <%- include('../partials/header'); %>
 </header>
 
-<body class="">
-    <div class="container-fluid MyContent">
+<body>
+    <div class="MyContent container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="container">
+                    <div class="card">
+                        <table class="roundedCorners table table-hover table-striped" style="max-width: 600px;">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Designation</th>
+                                    <th scope="col">Type / Department</th>
+                                    <th scope="col">EID</th>
+                                    <th scope="col">Start Date</th>
+                                    <th scope="col">End Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>HOD</td>
+                                    <td>CSE</td>
+                                    <td>a</td>
+                                    <td>01/01/2000</td>
+                                    <td>01/12/2010</td>
+                                </tr>
+                                <tr>
+                                    <td>HOD</td>
+                                    <td>ME</td>
+                                    <td>a</td>
+                                    <td>01/01/2000</td>
+                                    <td>01/12/2010</td>
+                                </tr>
+                                <tr>
+                                    <td>Dean</td>
+                                    <td>Faculty Affairs</td>
+                                    <td>a</td>
+                                    <td>01/01/2000</td>
+                                    <td>01/12/2010</td>
+                                </tr>
+                                <tr>
+                                    <td>HOD</td>
+                                    <td>MMB</td>
+                                    <td>a</td>
+                                    <td>01/01/2000</td>
+                                    <td>01/12/2010</td>
+                                </tr>
+                                <tr>
+                                    <td>Dean</td>
+                                    <td>Research</td>
+                                    <td>a</td>
+                                    <td>01/01/2000</td>
+                                    <td>01/12/2010</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-        <div class="row" style="height: 10px;"></div>
+                    <div class="col card shadow mx-2 my-4" style="padding-bottom: 10px;">
 
-        <div class="col">
-            <h3>todo: change this <br><br> employee details</h3>
-            <!-- <br><br><br><br> -->
-            <% let str = "EID :" + employee.EID + "\n" + "name :" + employee.name + "\n" + "deptName :" + employee.deptName + "\n" + "leavesRemaining :" + employee.leavesRemaining + "\n" + "penaltyLeaves :" + employee.penaltyLeaves + "\n"; %>
-            <div>
-                <pre> <%= str %> </pre>
+                        <div class="row w-100" style="margin-bottom: 5px;">
+                            <h5 class="card-header w-100">Assign New Employee to Selected Designation
+                            </h5>
+                        </div>
+
+                        <form method="POST" action="">
+                            <div class="form-row align-items-center shadow">
+                                <div class="col-auto my-3">
+                                    <select
+                                        style="min-height: 50px; background-color: #1a75ff; color: white; border-radius: 5px; margin-left: 1%; margin-right: 10%;"
+                                        class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                                        <option selected style="padding: 5px;">Select Designation</option>
+                                        <option value="1" style="background-color: white; color: #1a75ff;">Head Of
+                                            Department (HOD)</option>
+                                        <option value="2" style="background-color: white; color: #1a75ff;">Dean</option>
+                                    </select>
+
+                                    <select
+                                        style="min-height: 50px; background-color: #1a75ff; color: white; border-radius: 5px;"
+                                        class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                                        <option selected>Select Type / Department</option>
+                                        <option value="1" style="background-color: white; color: #1a75ff;">Faculty
+                                            Affairs</option>
+                                        <option value="2" style="background-color: white; color: #1a75ff;">Research
+                                        </option>
+                                        <option value="2" style="background-color: white; color: #1a75ff;">Student
+                                            Affairs</option>
+                                        <option value="2" style="background-color: white; color: #1a75ff;">Academic
+                                            Affairs</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="content" id="content"
+                                    placeholder="Enter EID for Employee you want to assign">
+
+                                <br>
+                                <label for="start"> Start Date : </label>
+                                <input name="start" type="date" style="border: 2px solid; border-radius: 4px;">
+
+                                <label for="endDate"> End Date : </label>
+                                <input name="endDate" type="date" style="border: 2px solid; border-radius: 4px;">
+
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="background-color: #1a75ff;">Add /
+                                Change</button>
+                        </form>
+
+                    </div>
+                </div>
+
             </div>
-            
         </div>
-
     </div>
-
 
 </body>
 
