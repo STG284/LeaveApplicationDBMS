@@ -104,7 +104,7 @@ RETURNS TRIGGER AS $$
                 WHERE eid = NEW.eid
             INTO department;
             IF NEW.type_or_dept <> department THEN
-                RAISE EXCEPTION 'Error: Faculty of % department can''t be HOD of % department',department, NEW.type_or_dept;
+                RAISE EXCEPTION 'Error: Faculty of % department can''t be HOD of % department', department, NEW.type_or_dept;
             END IF;
         END IF;
         
@@ -223,7 +223,7 @@ RETURNS TRIGGER AS $$
         END IF;
 
         -- Get status of previous latest ApplicationEvent for this LID
-        SELECT status FROM ApplicationEvent
+        SELECT newStatus FROM ApplicationEvent
             WHERE LID = NEW.LID
             AND time = 
                 (SELECT max(time) FROM ApplicationEvent
