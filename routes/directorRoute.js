@@ -1,6 +1,6 @@
 const express = require('express')
 const dbhandler = require('../db/dbhandler')
-const { prettyDate, handleGetError, sortApplicationEvents } = require('../utils/utils')
+const { prettyDate, handleGetError, getSore } = require('../utils/utils')
 const directorRoute = express.Router()
 
 directorRoute.get("/designationChange", async (req, res) => {
@@ -14,8 +14,13 @@ directorRoute.get("/designationChange", async (req, res) => {
             throw Error('Only Director is allowed to access this page!')
 
         let employee = await dbhandler.getEmployee(req.session.EID)
+        let specialDesignation = await dbhandler.getAssignedSpecialDesignation(req.session.EID)
 
-        res.render("./pages/designationChange.ejs", { employee: employee })
+        res.render("./pages/designationChange.ejs", { 
+            employee: employee,
+            specialDesignation: specialDesignation
+        })
+
     } catch (error) {
         handleGetError(res, error)
     }
@@ -36,6 +41,7 @@ directorRoute.get("/allLeaves", async (req, res) => {
 
         let employee = await dbhandler.getEmployee(req.session.EID)
         let allLeaves = await dbhandler.getAllLeaves()
+        let specialDesignation = await dbhandler.getAssignedSpecialDesignation(req.session.EID)
 
         let sortedAllLeaves = allLeaves.sort((a1, a2)=>{
             return new Date(a2.dateOfApplication) - new Date(a1.dateOfApplication)
@@ -43,6 +49,7 @@ directorRoute.get("/allLeaves", async (req, res) => {
 
         res.render("./pages/myLeaves.ejs", {
             employee: employee,
+            specialDesignation: specialDesignation,
             myLeaves: sortedAllLeaves,
             prettyDate: prettyDate,
         })

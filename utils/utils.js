@@ -16,14 +16,24 @@ function handleGetError(res, error) {
     console.error(error);
 }
 
-function sortApplicationEvents(applicationEvents) {
+function getSortedApplicationEvents(applicationEvents) {
     return applicationEvents.sort((e1, e2)=>{
             return new Date(e1.date) - new Date(e2.date);
         })
 }
 
+function getDateSortedLeavesArray(leaves, isAscending=false) {
+    return leaves.sort((a1, a2)=>{
+        if(isAscending)
+            return new Date(a1.dateOfApplication) - new Date(a2.dateOfApplication)
+        else 
+            return new Date(a2.dateOfApplication) - new Date(a1.dateOfApplication)
+    })
+}
+
 module.exports = {
     prettyDate: prettyDate,
     handleGetError: handleGetError,
-    sortApplicationEvents: sortApplicationEvents
+    getSortedApplicationEvents: getSortedApplicationEvents,
+    getDateSortedLeavesArray: getDateSortedLeavesArray
 }
