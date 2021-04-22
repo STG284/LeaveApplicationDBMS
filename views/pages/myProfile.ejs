@@ -24,13 +24,42 @@
         <div class="row" style="height: 10px;"></div>
 
         <div class="col">
-            <h3>employee details</h3>
+
+            <button type="button"
+                style="background-color: #1a75ff; color: white; border:none; border-radius: 5px; padding: 5px; width:100px">
+                General</button>
+            <button type="button"
+                style="background-color: white; margin: auto 40px; border:1.5px solid #1a75ff; border-radius: 5px; padding: 5px; width:100px">
+                Security</button>
+            <button type="button"
+                style="background-color: white; border:1.5px solid #1a75ff; border-radius: 5px; padding: 5px; width:100px">
+                History</button>
+            <!-- <h3>Employee Details</h3> -->
             <!-- <br><br><br><br> -->
-            <% let str = "EID :" + employee.EID + "\n" + "name :" + employee.name + "\n" + "deptName :" + employee.deptName + "\n" + "leavesRemaining :" + employee.leavesRemaining + "\n" + "penaltyLeaves :" + employee.penaltyLeaves + "\n"; %>
-            <div>
-                <pre> <%= str %> </pre>
+            <br><br>
+
+                <div class="container-fluid" style="padding: 10px;">
+                    <div class="row">
+                        <div class="col card shadow" style="padding:1.5%; padding-top: 8px;">
+                            <h3> Employee Name</h3>
+                            <div> Director(untill 10 April )</div>
+                            <br>
+                            <br>
+                            <div>Employee ID : 3</div>
+                            <div>Department Name : EE</div>
+                            <div>Leaves Remaoning : 10</div>
+                            <div>Penalty Leaves : 0</div>
+                        </div>
+                    </div>
             </div>
-            
+            <!-- <% let str="EID :" + employee.EID + "\n" + "name :" + employee.name + "\n" + "deptName :" + employee.deptName
+            + "\n" + "leavesRemaining :" + employee.leavesRemaining + "\n" + "penaltyLeaves :" + employee.penaltyLeaves
+            + "\n" ; %> -->
+            <!-- <div>
+                <pre> <%= str %> </pre>
+            </div> -->
+
+
         </div>
 
     </div>
