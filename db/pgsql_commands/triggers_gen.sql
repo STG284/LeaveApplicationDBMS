@@ -136,7 +136,7 @@ RETURNS TRIGGER AS $$
     END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger01_validateSpecialDesignationTrigger
+CREATE TRIGGER trigger02_validateSpecialDesignationTrigger
 BEFORE INSERT ON SpecialDesignation
 FOR EACH ROW EXECUTE PROCEDURE validateSpecialDesignation();
 
@@ -158,7 +158,7 @@ RETURNS TRIGGER AS $$
     END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger02_decreasePendingDesignationsTrigger
+CREATE TRIGGER trigger01_decreasePendingDesignationsTrigger
 BEFORE INSERT ON SpecialDesignation
 FOR EACH ROW EXECUTE PROCEDURE decreasePendingDesignations();
 
@@ -172,7 +172,7 @@ RETURNS TRIGGER AS $$
         hodEID int;
         deanEID int;
         directorEID int;
-        _previousState varchar;
+        _previousState LeaveStatus;
     BEGIN
         -- finding applicant
         SELECT EID FROM LeaveApplication 
@@ -230,7 +230,7 @@ RETURNS TRIGGER AS $$
                     WHERE LID = NEW.LID)
             INTO _previousState;
         
-        if _previousState = New.newStatus THEN
+        IF _previousState = New.newStatus THEN
             RAISE EXCEPTION 'Cannot set state % again!', _previousState;
         END IF;
 
