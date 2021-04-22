@@ -60,5 +60,23 @@ directorRoute.get("/allLeaves", async (req, res) => {
 })
 
 
+// POST Requests:
+directorRoute.post("/designationChange", async (req, res) => {
+    try {
+
+            await dbhandler.changeDesignation(
+                req.body.eid, 
+                req.body.designation,
+                req.body.type_or_dept,
+                new Date(req.body.startDate),
+                new Date(req.body.endDate))
+
+        res.redirect("/director/designationChange")
+
+    } catch (error) {
+        handleGetError(res, error)
+    }
+})
+
 
 module.exports = directorRoute

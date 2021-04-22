@@ -306,7 +306,23 @@ async function isChecker(EID, LID) {
     return _isChecker
 }
 
+async function changeDesignation(EID, designation, type_or_dept, startDate, endDate) {
+    let startDate_s = dateformat(startDate, Constants.DATE_PGSQL_FORMAT)
+    let endDate_s = dateformat(endDate, Constants.DATE_PGSQL_FORMAT)
 
+    let q = `INSERT INTO SpecialDesignation(EID, designation, type_or_dept, startDate, endDate) 
+    VALUES (${EID}, '${designation}', '${type_or_dept}', '${startDate_s}', '${endDate_s}'); `;
+
+    console.log("changeDesig:\n" + q)
+    try{
+        await pool.query(`
+            INSERT INTO SpecialDesignation(EID, designation, type_or_dept, startDate, endDate) 
+                VALUES (${EID}, '${designation}', '${type_or_dept}', '${startDate_s}', '${endDate_s}'); `)
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    }
+}
 
 function canAddEvent(isChecker, currentStatus) {
     if(isChecker){
@@ -365,6 +381,7 @@ module.exports = {
     // setters
     createLeaveApplication: createLeaveApplication,
     addApplicationEvent: addApplicationEvent,
+    changeDesignation: changeDesignation,
 
     // getters
     getMyLeaves: getMyLeaves,

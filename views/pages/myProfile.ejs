@@ -41,14 +41,63 @@
                 <div class="container-fluid" style="padding: 10px;">
                     <div class="row">
                         <div class="col card shadow" style="padding:1.5%; padding-top: 8px;">
-                            <h3> Employee Name</h3>
-                            <div> Director(untill 10 April )</div>
+
+                            <!-- Try     -->
+                            <span class="card flex-row flex-wrap" style="height: 260px; padding-right: inherit; min-width: 26%;">
+                                <img class="my-auto" src="/images/profile.png" alt="" height="80px" width="95px">
+                                <div class="card-block p-2">
+                                    <p class="">
+                                        <h3 class="mx-auto d-inline"><%= employee.name %></h3>
+                                        <strong class="d-inline alert alert-warning p-1 float-right" style="margin-left: 20px; color: brown;"> EID: <%= employee.EID %> </strong>
+                                    </p>
+                                    
+                                    <% 
+                                        let desigString = null;
+                                        if(specialDesignation != null)
+                                            desigString = specialDesignation.designation 
+                                        if(specialDesignation != null && specialDesignation.designation == 'Dean')
+                                            desigString = desigString + ", " + specialDesignation.type_or_dept;
+                                    %>
+                                    <% if(specialDesignation != null ) %>
+                                        <p class="card-subtitle"><%= desigString %></p>
+                        
+                                    <p class="my-0">
+                                        <%= employee.deptName %>
+                                    </p> 
+                                    <div>Employee ID : <%= employee.EID %></div>
+                            <div>Department Name : <%= employee.deptName %></div>
+                            <div>Leaves Remaining : <%= employee.leavesRemaining %></div>
+                            <div>Penalty Leaves : <%= employee.penaltyLeaves %></div>
+                                    <!-- <a href="/logout" class="btn-sm btn-danger float-right">Logout</a> -->
+                                </div>
+                                <!-- <div class="w-100"></div>
+                                <div class="card-footer w-100 text-muted">
+                                    FOOTER
+                                </div> -->
+                            </span>
+                            <!-- Try -->
+
+
+                            <!-- <img class="my-auto" src="/images/profile.png" alt="" height="80px" width="95px">
+                            <h3> <%= employee.name %> </h3>
+                            <div> 
+                            <% 
+                                let newdesigString = null;
+                                if(specialDesignation != null)
+                                    newdesigString = specialDesignation.designation 
+                                if(specialDesignation != null && specialDesignation.designation == 'Dean')
+                                    newdesigString = newdesigString + ", " + specialDesignation.type_or_dept;
+                            %>
+                            <% if(specialDesignation != null ) %>
+                            <p class="card-subtitle"><%= desigString %></p>
+                            </div>
                             <br>
                             <br>
-                            <div>Employee ID : 3</div>
-                            <div>Department Name : EE</div>
-                            <div>Leaves Remaoning : 10</div>
-                            <div>Penalty Leaves : 0</div>
+                            <div>Employee ID : <%= employee.EID %></div>
+                            <div>Department Name : <%= employee.deptName %></div>
+                            <div>Leaves Remaining : <%= employee.leavesRemaining %></div>
+                            <div>Penalty Leaves : <%= employee.penaltyLeaves %></div> -->
+
                         </div>
                     </div>
             </div>
