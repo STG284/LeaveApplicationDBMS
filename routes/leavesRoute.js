@@ -28,6 +28,8 @@ leavesRouter.get("/:lid", async (req, res)=>{
         let _isChecker = await dbhandler.isChecker(employee.EID, leaveApplication.LID)
         let _canAddEvent = dbhandler.canAddEvent(_isChecker, leaveApplication.status)
 
+        let thisLeaveRoutes = await dbhandler.getLeaveApplicationRoute(leaveApplication.LID)
+
         // console.log(employee.EID, leaveApplication.LID, _isChecker, leaveApplication.status)
 
         res.render("./pages/leaveApplicationDetail.ejs", {
@@ -37,7 +39,8 @@ leavesRouter.get("/:lid", async (req, res)=>{
             applicationEvents: getSortedApplicationEvents(applicationEvents),
             prettyDate: prettyDate,
             canAddEvent: _canAddEvent,
-            isChecker: _isChecker
+            isChecker: _isChecker,
+            thisLeaveRoutes: thisLeaveRoutes
         })
 
     } catch (error) {

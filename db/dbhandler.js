@@ -6,7 +6,7 @@ const { LeaveApplicationType } = require('../utils/constants')
 const { parseLeaveApplications } = require('../entities/LeaveApplication')
 const { parseSpecialDesignations } = require('../entities/SpecialDesignation')
 const { parseApplicationEvents } = require('../entities/ApplicationEvent')
-const constants = require('../utils/constants')
+const { parseLeaveRoutes } = require('../entities/LeaveRoute')
 const { parseEmployees } = require('../entities/Employee')
 
 const pool = new Pool(
@@ -277,12 +277,14 @@ async function getApplicationEvents(LID) {
     }
 }
 
-async function getLeaveApplicationChecker(LID) {
+async function getLeaveApplicationRoute(LID) {
     try{
         let result = await pool.query(`
-            SELECT * from ApplicationEvent
+            SELECT * from LeaveRoute
                 WHERE LID = ${LID};`)
-        return parseApplicationEvents(result['rows'])
+        return parseLeaveRoutes(result['rows']).sort((r1, r2)=>{
+            return r1.position - r2.position
+        })
     } catch (e) {
         console.error(e.stack)
         throw(e) //rethrowing error to let the router catch and return error message
@@ -331,7 +333,7 @@ function canAddEvent(isChecker, currentStatus) {
 async function systemTerminateApplicationsIfRequired() {
     const sysRejContent = ""
     const sysRejbyEID = -1
-    const sysRejEvent = constants.LeaveStatus.systemTerminated;
+    const sysRejEvent = Constants.LeaveStatus.systemTerminated;
     try{
         let result = await pool.query(`
             SELECT LID FROM LeaveApplication
@@ -373,6 +375,7 @@ module.exports = {
     getEmployee: getEmployee,
     getCountOfEmployeesWithEid: getCountOfEmployeesWithEid,
     getAssignedSpecialDesignation: getAssignedSpecialDesignation,
+    getLeaveApplicationRoute: getLeaveApplicationRoute,
 
     // authCheck
     isChecker: isChecker,
