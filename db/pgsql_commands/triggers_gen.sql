@@ -256,9 +256,15 @@ RETURNS TRIGGER AS $$
         _leaveApplication LeaveApplication;
         _curRoutePosition int; -- current route position
         _nextLeaveRoute LeaveRoute;
+        _currentNoOfLeaves int;
+        _usedLeaves int;
     BEGIN
         
-        -- addign new route if required!
+        SELECT * FROM LeaveApplication 
+                WHERE LID = NEW.LID
+                INTO _leaveApplication;
+                
+        -- adding new route if required!
         IF NEW.newStatus = 'approved' THEN
 
             -- update the status of last route:
@@ -266,10 +272,6 @@ RETURNS TRIGGER AS $$
                 SET isApproved = TRUE
                 WHERE LID = NEW.LID 
                     AND position = _curRoutePosition;
-
-            SELECT * FROM LeaveApplication 
-                WHERE LID = NEW.LID
-                INTO _leaveApplication;
             
             -- the last completed position in ApplicationRoute for this application
             SELECT MAX(position) FROM LeaveRoute
@@ -311,10 +313,41 @@ RETURNS TRIGGER AS $$
             END IF;
         END IF;
 
-        -- control reaches here only if no new route were added
+        -- control reaches here only if "NO NEW ROUTE" were added
+        
+        -- reduce leaves from employee account
+        IF NEW.newStatus = 'approved' THEN
+            SELECT leavesRemaining FROM Employee
+                WHERE EID = _leaveApplication.EID
+                INTO _currentNoOfLeaves;
+            
+            SELECT (_leaveApplication.leaveEndDate::date - _leaveApplication.leaveStartDate::date)
+                INTO _usedLeaves;
+
+            IF _currentNoOfLeaves < _usedLeaves THEN
+                RAISE EXCEPTION 'Number of leaves are more than that allowed for this user for this year!';
+            END IF;
+
+            UPDATE Employee
+                SET leavesRemaining = leavesRemaining - _usedLeaves
+                WHERE EID = _leaveApplication.EID;
+        END IF;
+
+        -- if the leave is retrospectuve and terminated, add leaves in penaltyleaves
+        IF (NEW.newStatus = 'terminated' AND _leaveApplication.leaveStartDate <= now()) THEN
+            SELECT (_leaveApplication.leaveEndDate::date - _leaveApplication.leaveStartDate::date)
+                INTO _usedLeaves;
+
+            UPDATE Employee
+                SET penaltyLeaves = penaltyLeaves + _usedLeaves
+                WHERE EID = _leaveApplication.EID;
+        END IF;
+
+        -- everything is okay, leave is approved
         UPDATE LeaveApplication
             SET status = NEW.newStatus
             WHERE LID = NEW.LID;
+
         RETURN NEW;
     END;
 $$ LANGUAGE plpgsql;

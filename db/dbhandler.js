@@ -304,7 +304,6 @@ async function getAllSpecialDesignations() {
     }
 }
 
-
 async function isChecker(EID, LID) {
     let allReq = await getLeaveRequests(EID);
     // console.log("allReq: ", allReq)
