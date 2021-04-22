@@ -205,9 +205,12 @@ RETURNS TRIGGER AS $$
         IF NEW.byEID <> applicantEID 
             AND NEW.byEID <> hodEID 
             AND NEW.byEID <> deanEID
-            AND NEW.byEID <> directorEID THEN
+            AND NEW.byEID <> directorEID
+            AND NEW.byEID <> -1 THEN
             RAISE EXCEPTION 'Not authorised to set any event!';
         END IF;
+
+        RAISE NOTICE 'h1';
 
         IF 
             -- if person checker, status allowed are: 'approved', 'rejected', 'terminated'
@@ -222,6 +225,8 @@ RETURNS TRIGGER AS $$
             RAISE EXCEPTION 'Not authorised to set event "%" !', NEW.newStatus;
         END IF;
 
+        RAISE NOTICE 'h2';
+
         -- Get status of previous latest ApplicationEvent for this LID
         SELECT newStatus FROM ApplicationEvent
             WHERE LID = NEW.LID
@@ -233,7 +238,8 @@ RETURNS TRIGGER AS $$
         -- IF _previousState = New.newStatus THEN
         --     RAISE EXCEPTION 'Cannot set state % again!', _previousState;
         -- END IF;
-
+        RAISE NOTICE 'h3';
+        
         RETURN NEW;
     END;
 $$ LANGUAGE plpgsql;

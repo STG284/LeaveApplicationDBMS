@@ -156,7 +156,6 @@ async function createLeaveApplication(EID, content, startDate, endDate) {
 }
 
 async function addApplicationEvent(LID, byEID, content, newStatus) {
-    const client = await pool.connect()
     try{
         await pool.query(`
             INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
@@ -291,6 +290,20 @@ async function getLeaveApplicationRoute(LID) {
     }
 }
 
+async function getAllSpecialDesignations() {
+    try{
+        let result = await pool.query(`
+            SELECT * from SpecialDesignation 
+                WHERE startDate <= now()
+                AND endDate > now();`)
+        return parseSpecialDesignations(result['rows'])
+
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    }
+}
+
 
 async function isChecker(EID, LID) {
     let allReq = await getLeaveRequests(EID);
@@ -353,16 +366,17 @@ async function systemTerminateApplicationsIfRequired() {
     try{
         let result = await pool.query(`
             SELECT LID FROM LeaveApplication
-                WHERE startDate <= now() 
+                WHERE leaveStartDate <= now() 
                     AND (status = 'pending' OR status = 'rejected');`);
         
         let allPromises = []
-        result['rows'].forEach(toTerminateLID => {
+        result['rows'].forEach(aRowJson => {
             // not waiting for this to complete!
+            let toTerminateLID = aRowJson['lid']
             let apromise = 
                 pool.query(`
                     INSERT INTO ApplicationEvent(LID, byEID, time, content, newStatus)
-                        VALUES(${toTerminateLID}, ${sysRejbyEID}, now(), '${sysRejContent}', ${sysRejEvent});`)
+                        VALUES(${toTerminateLID}, ${sysRejbyEID}, now(), '${sysRejContent}', '${sysRejEvent}');`)
             allPromises.push(apromise)
         });
         // waiting for all concurrent queries to complete
@@ -393,6 +407,7 @@ module.exports = {
     getCountOfEmployeesWithEid: getCountOfEmployeesWithEid,
     getAssignedSpecialDesignation: getAssignedSpecialDesignation,
     getLeaveApplicationRoute: getLeaveApplicationRoute,
+    getAllSpecialDesignations: getAllSpecialDesignations,
 
     // authCheck
     isChecker: isChecker,

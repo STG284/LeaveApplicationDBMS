@@ -15,10 +15,13 @@ directorRoute.get("/designationChange", async (req, res) => {
 
         let employee = await dbhandler.getEmployee(req.session.EID)
         let specialDesignation = await dbhandler.getAssignedSpecialDesignation(req.session.EID)
+        let allSpecialDesignations = await dbhandler.getAllSpecialDesignations()
 
         res.render("./pages/designationChange.ejs", { 
             employee: employee,
-            specialDesignation: specialDesignation
+            prettyDate: prettyDate,
+            specialDesignation: specialDesignation,
+            allSpecialDesignations: allSpecialDesignations
         })
 
     } catch (error) {

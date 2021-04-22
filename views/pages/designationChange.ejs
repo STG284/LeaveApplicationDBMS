@@ -39,42 +39,18 @@
                                 <th scope="col">End Date</th>
                             </tr>
                         </thead>
+
                         <tbody>
-                            <tr>
-                                <td>HOD</td>
-                                <td>CSE</td>
-                                <td>a</td>
-                                <td>01/01/2000</td>
-                                <td>01/12/2010</td>
-                            </tr>
-                            <tr>
-                                <td>HOD</td>
-                                <td>ME</td>
-                                <td>a</td>
-                                <td>01/01/2000</td>
-                                <td>01/12/2010</td>
-                            </tr>
-                            <tr>
-                                <td>Dean</td>
-                                <td>Faculty Affairs</td>
-                                <td>a</td>
-                                <td>01/01/2000</td>
-                                <td>01/12/2010</td>
-                            </tr>
-                            <tr>
-                                <td>HOD</td>
-                                <td>MMB</td>
-                                <td>a</td>
-                                <td>01/01/2000</td>
-                                <td>01/12/2010</td>
-                            </tr>
-                            <tr>
-                                <td>Dean</td>
-                                <td>Research</td>
-                                <td>a</td>
-                                <td>01/01/2000</td>
-                                <td>01/12/2010</td>
-                            </tr>
+                            <% allSpecialDesignations.forEach((sd)=>{  %>
+                                <tr>
+                                    <td><%= sd.designation %></td>
+                                    <td><%= sd.type_or_dept %></td>
+                                    <td><%= sd.eid %></td>
+                                    <td><%= prettyDate(sd.startDate) %></td>
+                                    <td><%= prettyDate(sd.endDate) %></td>
+                                </tr>
+                            <% }) %>
+                            
                         </tbody>
                     </table>
 
@@ -119,7 +95,7 @@
     
                                     
                                     <div>
-                                        <label for="eid" class="form-label"> New Assigne for the post :</label>
+                                        <label for="eid" class="form-label"> New Assignee for this post :</label>
                                         <input type="text" required class="form-control m-2" name="eid" id="eid" placeholder="Enter Employee ID" style="display: inline; width: auto;">
                                     </div>
                                     
