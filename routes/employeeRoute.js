@@ -60,6 +60,22 @@ employeeRouter.get("/MyLeaveRequests", async (req, res)=>{
 })
 
 
+employeeRouter.get("/NewLeaveApplication", async (req, res)=>{
+    try {
+        
+        let employee = await dbhandler.getEmployee(req.session.EID)
+        let myLeaves = await dbhandler.getMyLeaves(req.session.EID)
+        
+        res.render("./pages/newLeaveApplication.ejs", {
+            employee: employee,
+            prettyDate: prettyDate,
+        })
+
+    } catch (error) {
+        handleGetError(res, error)
+    }
+    
+})
 
 
 module.exports = employeeRouter
