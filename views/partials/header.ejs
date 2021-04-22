@@ -46,7 +46,7 @@
                 <a class="nav-link" href="/employee/MyProfile">My Profile</a>
             </li>
         
-            <% if( specialDesignation.designation != 'Director'){ %>
+            <% if( specialDesignation == null || specialDesignation.designation != 'Director'){ %>
 
                 <li class="nav-item">
                     <a class="nav-link" href="/employee/NewLeaveApplication">New Leave Application</a>
@@ -62,7 +62,7 @@
                 <a class="nav-link" href="/employee/MyLeaveRequests">Leave Requests</a>
             </li>
 
-            <% if( specialDesignation.designation == 'Director'){ %>
+            <% if(  specialDesignation != null && specialDesignation.designation == 'Director'){ %>
 
                 <li class="nav-item">
                     <a class="nav-link" href="/director/AllLeaves">All Leaves</a>
