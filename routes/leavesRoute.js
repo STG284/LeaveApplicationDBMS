@@ -1,6 +1,6 @@
 const express = require('express')
 const dbhandler = require('../db/dbhandler')
-const { prettyDate, handleGetError, sortApplicationEvents } = require('../utils/utils')
+const { prettyDate, handleGetError, getSortedApplicationEvents } = require('../utils/utils')
 const leavesRouter = express.Router()
 
 leavesRouter.get("/:lid", async (req, res)=>{
@@ -13,6 +13,7 @@ leavesRouter.get("/:lid", async (req, res)=>{
             throw Error(`Invalid EID '${req.session.EID}'`)
 
         let employee = await dbhandler.getEmployee(req.session.EID)
+        let specialDesignation = await dbhandler.getAssignedSpecialDesignation(req.session.EID)
 
         let lid = req.params.lid
         let leaveApplication = await dbhandler.getLeaveApplication(lid)
@@ -31,8 +32,9 @@ leavesRouter.get("/:lid", async (req, res)=>{
 
         res.render("./pages/leaveApplicationDetail.ejs", {
             employee: employee, 
+            specialDesignation: specialDesignation,
             leaveApplication: leaveApplication,
-            applicationEvents: sortApplicationEvents(applicationEvents),
+            applicationEvents: getSortedApplicationEvents(applicationEvents),
             prettyDate: prettyDate,
             canAddEvent: _canAddEvent,
             isChecker: _isChecker
@@ -43,6 +45,8 @@ leavesRouter.get("/:lid", async (req, res)=>{
     }
 })
 
+
+// POST REQUESTS :-
 
 leavesRouter.post("/:lid/addEvent", async (req, res)=>{
     console.log("post request received leavesRouter: " + req.url + "\n\n", req.body)

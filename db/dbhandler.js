@@ -105,6 +105,7 @@ async function createLeaveApplication(EID, content, startDate, endDate) {
         let startDate_s = dateformat(startDate, Constants.DATE_PGSQL_FORMAT)
         let endDate_s = dateformat(endDate, Constants.DATE_PGSQL_FORMAT)
         console.log("startDate_s: ", startDate_s, "endDate_s:", endDate_s)
+        console.log("startDate: ", startDate, "endDate:", endDate)
 
         //check if user has special designation:
         let specialDesigRes = await client.query(`
@@ -119,7 +120,7 @@ async function createLeaveApplication(EID, content, startDate, endDate) {
         if(specialDesigRes['rowCount']>0){
             // has special designation
             thisLAType = LeaveApplicationType.Special;
-        }else if(endDate.getTime() < new Date().getTime()){
+        }else if(startDate.getTime() < new Date().getTime()){
             // retrospective leave!
             thisLAType = LeaveApplicationType.Retrospective;
         }
@@ -276,6 +277,19 @@ async function getApplicationEvents(LID) {
     }
 }
 
+async function getLeaveApplicationChecker(LID) {
+    try{
+        let result = await pool.query(`
+            SELECT * from ApplicationEvent
+                WHERE LID = ${LID};`)
+        return parseApplicationEvents(result['rows'])
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    }
+}
+
+
 async function isChecker(EID, LID) {
     let allReq = await getLeaveRequests(EID);
     // console.log("allReq: ", allReq)
@@ -289,6 +303,8 @@ async function isChecker(EID, LID) {
 
     return _isChecker
 }
+
+
 
 function canAddEvent(isChecker, currentStatus) {
     if(isChecker){
@@ -356,6 +372,7 @@ module.exports = {
     getApplicationEvents: getApplicationEvents,
     getEmployee: getEmployee,
     getCountOfEmployeesWithEid: getCountOfEmployeesWithEid,
+    getAssignedSpecialDesignation: getAssignedSpecialDesignation,
 
     // authCheck
     isChecker: isChecker,

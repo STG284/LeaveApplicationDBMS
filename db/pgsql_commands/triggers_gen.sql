@@ -172,6 +172,7 @@ RETURNS TRIGGER AS $$
         hodEID int;
         deanEID int;
         directorEID int;
+        _previousState varchar;
     BEGIN
         -- finding applicant
         SELECT EID FROM LeaveApplication 
@@ -219,6 +220,18 @@ RETURNS TRIGGER AS $$
             OR (NEW.byEID <> -1 AND New.newStatus = 'systemTerminated')
         THEN
             RAISE EXCEPTION 'Not authorised to set event "%" !', NEW.newStatus;
+        END IF;
+
+        -- Get status of previous latest ApplicationEvent for this LID
+        SELECT status FROM ApplicationEvent
+            WHERE LID = NEW.LID
+            AND time = 
+                (SELECT max(time) FROM ApplicationEvent
+                    WHERE LID = NEW.LID)
+            INTO _previousState;
+        
+        if _previousState = New.newStatus THEN
+            RAISE EXCEPTION 'Cannot set state % again!', _previousState;
         END IF;
 
         RETURN NEW;

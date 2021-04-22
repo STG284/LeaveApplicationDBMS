@@ -8,7 +8,7 @@
     position: fixed!important;
     left: 0px;
     bottom: 0px;
-    top: 159px;
+    top: 185px;
     width: 25%;
     height: 74%!important;
     z-index: 10;
@@ -26,13 +26,14 @@
 }
 
 .MyContent{
-    margin-top: 156px;
+    margin-top: 176px;
     height: 75%;
     position: fixed;
-    left: 320px;
+    left: 25%;
     padding: 15px;
     width: 75%;
     overflow: auto;
+    padding-bottom: 55px;
 }
 
 .MyAutoTBMargin{
