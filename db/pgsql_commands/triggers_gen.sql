@@ -287,6 +287,8 @@ RETURNS TRIGGER AS $$
                     IF _leaveApplication.type = 'Retrospective' THEN
                         _nextLeaveRoute := (NEW.LID, 3, 'Director', 'Director', FALSE);
                     END IF;
+                WHEN 3 THEN
+                    _nextLeaveRoute = NULL;
             END CASE;
             
             -- RAISE NOTICE '_nextLeaveRoute: % ', _nextLeaveRoute;

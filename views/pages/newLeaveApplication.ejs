@@ -50,8 +50,35 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
-
                     
+                    
+                    <script>
+                        $(function () {
+                            $("#startDatePicker").change(function(){
+                                console.log("fbhdafd")
+
+                                let leavesRemaining = <%= employee.leavesRemaining %>;
+                                let dateI1 = document.getElementById("startDatePicker").value;
+                                let date1 = new Date(dateI1);
+                                
+                                if(date1 > new Date()){
+                                    console.log("h1")
+                                    
+                                    console.log("adate: ", date1)
+                                    date1.setDate(date1.getDate() + leavesRemaining);
+
+                                    $("#endDatePicker").attr("max", date1.toISOString().split('T')[0])
+                                }else{
+                                    console.log("h2")
+                                    $("#endDatePicker").removeAttr("max")
+                                }
+                                    
+                            })
+
+                        })
+
+                    </script>                    
+
                 </div>
 
             </div>
