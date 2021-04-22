@@ -1,10 +1,7 @@
 const express = require('express')
-const { canAddEvent, isChecker } = require('../db/dbhandler')
 const dbhandler = require('../db/dbhandler')
 const { prettyDate, handleGetError, sortApplicationEvents } = require('../utils/utils')
 const leavesRouter = express.Router()
-
-require('../db/dbhandler')
 
 leavesRouter.get("/:lid", async (req, res)=>{
     console.log("get request received leavesRouter")
@@ -16,7 +13,6 @@ leavesRouter.get("/:lid", async (req, res)=>{
             throw Error(`Invalid EID '${req.session.EID}'`)
 
         let employee = await dbhandler.getEmployee(req.session.EID)
-        let myLeaves = await dbhandler.getMyLeaves(req.session.EID)
 
         let lid = req.params.lid
         let leaveApplication = await dbhandler.getLeaveApplication(lid)
@@ -28,12 +24,12 @@ leavesRouter.get("/:lid", async (req, res)=>{
         console.log("leaveApplication", leaveApplication)
         console.log("events", applicationEvents)
         
-        let _isChecker = await isChecker(employee.EID, leaveApplication.LID)
-        let _canAddEvent = canAddEvent(_isChecker, leaveApplication.status)
+        let _isChecker = await dbhandler.isChecker(employee.EID, leaveApplication.LID)
+        let _canAddEvent = dbhandler.canAddEvent(_isChecker, leaveApplication.status)
 
         // console.log(employee.EID, leaveApplication.LID, _isChecker, leaveApplication.status)
 
-        res.render("./pages/aLeave.ejs", {
+        res.render("./pages/leaveApplicationDetail.ejs", {
             employee: employee, 
             leaveApplication: leaveApplication,
             applicationEvents: sortApplicationEvents(applicationEvents),

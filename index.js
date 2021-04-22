@@ -2,14 +2,14 @@ const express = require('express');
 
 require('./utils/preinit') // to add colors to console logging :)
 
+const session = require('express-session');
 
 const testroutes = require('./routes/testroute')
 const loginRoute = require('./routes/loginroute');
 const employeeRoute = require('./routes/employeeRoute')
 const leavesRouter = require('./routes/leavesRoute');
+const directorRoute = require('./routes/directorRoute');
 
-const session = require('express-session');
-const secrets = require('./secrets');
 
 
 let app = express()
@@ -54,7 +54,6 @@ app.use("/login", loginRoute)
 
 // redirect to login screen if not logged in!
 app.use((req, res, next)=>{
-    console.log("recieved index.js here: " + req.url)
     if(req.session.EID === undefined){
         res.redirect("/login?next=" + req.url)
     }else{
@@ -75,6 +74,8 @@ app.get("/", (req, res)=>{
 app.use("/employee", employeeRoute)
 
 app.use("/leaves", leavesRouter)
+
+app.use("/director", directorRoute)
 
 
 app.listen(3001)

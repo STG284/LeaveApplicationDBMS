@@ -3,8 +3,6 @@ const dbhandler = require('../db/dbhandler')
 const { prettyDate, handleGetError } = require('../utils/utils')
 const employeeRouter = express.Router()
 
-require('../db/dbhandler')
-
 
 employeeRouter.get("/", (req,res)=>{
     res.redirect(req.baseUrl + "/myProfile")
@@ -64,7 +62,6 @@ employeeRouter.get("/NewLeaveApplication", async (req, res)=>{
     try {
         
         let employee = await dbhandler.getEmployee(req.session.EID)
-        let myLeaves = await dbhandler.getMyLeaves(req.session.EID)
         
         res.render("./pages/newLeaveApplication.ejs", {
             employee: employee,

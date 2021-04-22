@@ -2,8 +2,6 @@ const express = require('express')
 const dbhandler = require('../db/dbhandler')
 const loginRouter = express.Router()
 
-require('../db/dbhandler')
-
 loginRouter.get("/", (req, res)=>{
     if(req.query.next !== undefined && req.query.next !== null 
         && req.query.next.length > 0)
