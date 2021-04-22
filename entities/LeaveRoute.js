@@ -16,7 +16,7 @@ function parseLeaveRoutes(rowsJsonArray) {
             rowJson['lid'],
             rowJson['position'],
             rowJson['designation'],
-            rowJson['type_or_Dept'],
+            rowJson['type_or_dept'],
             rowJson['isapproved']
         )
         leaveRoutes.push(thisLR)

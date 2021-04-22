@@ -49,27 +49,33 @@
     <div class="row w-100" style="margin-bottom: 15px;">
         <h5 class="card-header w-100">Leave Application Progress:</h5>
     </div>
-    
     <table class="table table-striped">
         <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Designation</th>
-            <th scope="col">Type / Department</th>
-            <th scope="col">Status</th>
-          </tr>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Designation</th>
+                <th scope="col">Type / Department</th>
+                <th scope="col">Status</th>
+            </tr>
         </thead>
         <tbody>
+    
+        <% for(let i=0; i < thisLeaveRoutes.length; ++i ){ %>
+            <tr>
+                <th scope="row"> <%= thisLeaveRoutes[i].position %> </th>
+                <td> <%= thisLeaveRoutes[i].designation %> </td>
+                <td> <%= thisLeaveRoutes[i].type_or_dept %> </td>
+                <% if( i == thisLeaveRoutes.length-1  ){ %>
+                    <td> <%= leaveApplication.status.toUpperCase() %> </td>
+                <% } else{ %>
+                    <td>Approved</td>
+                <% } %>
+                    
+            </tr>
+        <% } %>
 
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          
         </tbody>
-      </table>
+    </table>
     
 
 </div>
