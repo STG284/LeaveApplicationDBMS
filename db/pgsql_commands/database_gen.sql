@@ -60,7 +60,7 @@ CREATE TABLE LeaveRoute (
 CREATE TABLE LeaveApplication (
   LID serial PRIMARY KEY NOT NULL,
   EID int NOT NULL,
-  dateOfApplication date NOT NULL DEFAULT (now()),
+  dateOfApplication timestamp NOT NULL DEFAULT (now()),
   type LeaveApplicationType NOT NULL,
   status LeaveStatus NOT NULL DEFAULT 'pending',
   leaveStartDate date NOT NULL,

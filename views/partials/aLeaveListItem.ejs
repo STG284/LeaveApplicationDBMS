@@ -34,7 +34,7 @@
                 <button class="btn <%= btnClass %>"><%= leaveApplication.status.toUpperCase() %></button>
 
             </div>
-            <div class="col MyAutoTBMargin">Applied on : <%= prettyDate( leaveApplication.dateOfApplication ) %>
+            <div class="col MyAutoTBMargin">Applied on : <%= prettyDate( leaveApplication.dateOfApplication, true ) %>
             </div>
         </div>
     </div>

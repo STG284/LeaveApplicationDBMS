@@ -35,9 +35,9 @@ router.get("/newLeaveA", async (req, res)=>{
     try {
         await dbhandler.createLeaveApplication(
             6, 
-            "meri marzi", 
-            new Date(Date.parse("2021-05-15 18:52:31.041565+05:30")), 
-            new Date(Date.parse("2021-05-17 18:52:31.041565+05:30"))
+            "test leave appliation content: n fdsfbjs fjdsa m as c\n kjb sdjafjsa\n kfdsba", 
+            new Date(Date.parse("2021-05-01")), 
+            new Date(Date.parse("2021-06-10"))
         )
         res.send("Done !");    
     } catch (error) {

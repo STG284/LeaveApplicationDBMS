@@ -180,6 +180,34 @@ async function getMyLeaves(EID) {
     }
 }
 
+async function isDirector(EID) {
+    try{
+        let result = await pool.query(`
+            SELECT EID FROM SpecialDesignation 
+                WHERE designation = 'Director' 
+                    AND startDate <= now() 
+                    AND endDate > now()
+                    AND EID = ${EID};`)
+
+        return result['rowCount']>0 // count should be 1 if EID is director or 0 id not
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    }
+}
+
+async function getAllLeaves() {
+
+    try{
+        let result = await pool.query(`
+            SELECT * from LeaveApplication;`)
+        return parseLeaveApplications(result['rows'])
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    }
+}
+
 async function getAssignedSpecialDesignation(EID) {
     try{
         let result = await pool.query(`
@@ -313,16 +341,27 @@ async function systemTerminateApplicationsIfRequired() {
 }
 
 module.exports = {
+    // for tests
     executeTestQuery: executeTestQuery,
-    getCountOfEmployeesWithEid: getCountOfEmployeesWithEid,
+    
+    // setters
     createLeaveApplication: createLeaveApplication,
     addApplicationEvent: addApplicationEvent,
+
+    // getters
     getMyLeaves: getMyLeaves,
+    getAllLeaves: getAllLeaves,
     getLeaveRequests: getLeaveRequests,
     getLeaveApplication: getLeaveApplication,
     getApplicationEvents: getApplicationEvents,
-    systemTerminateApplicationsIfRequired: systemTerminateApplicationsIfRequired,
     getEmployee: getEmployee,
+    getCountOfEmployeesWithEid: getCountOfEmployeesWithEid,
+
+    // authCheck
+    isChecker: isChecker,
+    isDirector: isDirector,
     canAddEvent: canAddEvent,
-    isChecker: isChecker
+
+    // for scheduler
+    systemTerminateApplicationsIfRequired: systemTerminateApplicationsIfRequired,
 }
