@@ -5,16 +5,16 @@ const employeeRouter = express.Router()
 
 
 employeeRouter.get("/", (req, res) => {
-    res.redirect(req.baseUrl + "/myProfile")
+    res.redirect(req.baseUrl + "/dashboard")
 })
 
-employeeRouter.get("/MyProfile", async (req, res) => {
+employeeRouter.get("/dashboard", async (req, res) => {
     try {
 
         let employee = await dbhandler.getEmployee(req.session.EID)
         let specialDesignation = await dbhandler.getAssignedSpecialDesignation(req.session.EID)
 
-        res.render("./pages/myProfile.ejs", { 
+        res.render("./pages/dashboard.ejs", { 
             employee: employee, 
             specialDesignation: specialDesignation
         })

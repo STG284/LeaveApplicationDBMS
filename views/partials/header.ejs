@@ -43,7 +43,15 @@
     <div class="flex-column mx-auto" id="navbarsExampleDefault">
         <ul class="navbar-nav" style="font-size: large;">
             <li class="nav-item">
-                <a class="nav-link" href="/employee/MyProfile">My Profile</a>
+                <a class="nav-link" href="/employee/Dashboard">Dashboard</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/profiles/<%=employee.EID%>">My Profile</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/profiles">All Profiles</a>
             </li>
         
             <% if( specialDesignation == null || specialDesignation.designation != 'Director'){ %>

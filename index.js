@@ -6,10 +6,10 @@ const session = require('express-session');
 
 const testroutes = require('./routes/testroute')
 const loginRoute = require('./routes/loginroute');
-const employeeRoute = require('./routes/employeeRoute')
+const employeeRouter = require('./routes/employeeRoute')
 const leavesRouter = require('./routes/leavesRoute');
-const directorRoute = require('./routes/directorRoute');
-
+const directorRouter = require('./routes/directorRoute');
+const profilesRouter = require('./routes/profilesRoute')
 
 
 let app = express()
@@ -71,11 +71,12 @@ app.get("/", (req, res)=>{
     
 })
 
-app.use("/employee", employeeRoute)
+app.use("/employee", employeeRouter)
 
 app.use("/leaves", leavesRouter)
 
-app.use("/director", directorRoute)
+app.use("/director", directorRouter)
 
+app.use("/profiles", profilesRouter)
 
 app.listen(3001)
