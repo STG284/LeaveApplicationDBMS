@@ -11,17 +11,74 @@
     <!-- importing bootstrap and other things which are used everywhere: -->
     <%- include('../partials/head'); %>
 
-    <title>Employee</title>
+        <title>Employee</title>
 </head>
 
 <header>
     <%- include('../partials/header'); %>
+
+    <!-- todo: remove this, only for testing purpose -->
+        <script>
+            $(document).ready(function () {
+                //toggle `popup` / `inline` mode
+                // $.fn.editable.defaults.mode = 'popup';     
+
+                //make username editable
+                $('#username').editable({
+                    mode: 'inline'
+                });
+
+                //make status editable
+                $('#status').editable({
+                    mode: 'inline',
+                    type: 'select',
+                    title: 'Select status',
+                    placement: 'right',
+                    value: 2,
+                    source: [
+                        { value: 1, text: 'status 1' },
+                        { value: 2, text: 'status 2' },
+                        { value: 3, text: 'status 3' }
+                    ]
+                    /*
+                    //uncomment these lines to send data on server
+                    ,pk: 1
+                    ,url: '/post'
+                    */
+                });
+
+                $(document).ready(function () {
+                    $('.comment').editable({
+                        mode: 'inline',
+                    });
+                    $('.hours').editable({
+                        mode: 'inline',
+                        type: 'number',
+                        step: '1.00',
+                        min: '0.00',
+                        max: '24'
+                    });
+                });
+            });
+        </script>
 </header>
 
 <body class="">
     <div class="container-fluid MyContent">
 
-        
+        <h1>X-editable starter template</h1>
+
+        <div>
+            <span>Username:</span>
+            <a href="#" id="username" data-type="text" data-placement="right" data-title="Enter username">superuser</a>
+        </div>
+
+        <div>
+            <span>Status:</span>
+            <a href="#" id="status"></a>
+        </div>
+
+
     </div>
 
 
