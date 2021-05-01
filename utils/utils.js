@@ -31,9 +31,18 @@ function getDateSortedLeavesArray(leaves, isAscending=false) {
     })
 }
 
+
+function sleepFor(ms) {
+    console.error("sleeping for " + ms + " ms")
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}   
+
 module.exports = {
     prettyDate: prettyDate,
     handleGetError: handleGetError,
     getSortedApplicationEvents: getSortedApplicationEvents,
-    getDateSortedLeavesArray: getDateSortedLeavesArray
+    getDateSortedLeavesArray: getDateSortedLeavesArray,
+    sleepFor: sleepFor
 }

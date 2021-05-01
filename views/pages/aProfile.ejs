@@ -10,6 +10,12 @@
 
     <!-- importing bootstrap and other things which are used everywhere: -->
     <%- include('../partials/head'); %>
+    
+    <!-- important to include before loading aProfile.js -->
+    <script>
+        let allowEdits = <%= allowEdits %>;
+    </script>
+    <script src="js/aProfile.js"></script>
 
     <title>Employee</title>
 </head>
@@ -20,8 +26,94 @@
 
 <body class="">
     <div class="container-fluid MyContent">
-
         
+        <div class="row">
+            <div class="col-4">
+                <div class="row">
+                    <div class="card shadow text-center mx-auto" style="width: 18rem;">
+                        <img class="card-img-top mx-auto" src="/images/profile.png" alt="" style="width: 180px;">
+                        <h3 class="card-title"><%= profile.name %></h3>
+                        <strong class="alert alert-warning p-1" style="color: brown;"> EID: <%= profile.EID %> </strong>
+    
+                        <% 
+                            let desigString = null;
+                            if(profile_specialDesignation != null)
+                                desigString = profile_specialDesignation.designation 
+                            if(profile_specialDesignation != null && profile_specialDesignation.designation == 'Dean')
+                                desigString = desigString + ", " + profile_specialDesignation.type_or_dept;
+                        %>
+    
+                        <% if(profile_specialDesignation != null ) %>
+                            <p style="margin-bottom: auto;"><%= desigString %></p>
+    
+                        <p><%= profile.deptName %></p> 
+                        
+                    </div>
+                </div>      
+            </div>
+
+            <div class="col-4">
+                <div class="row" style="height: 100%;">
+                    <div class="card shadow-sm" style="width: 100%;">
+                        <ul class="list-group list-group-flush">
+
+                            <li class="list-group-item">
+                                <b>Email : </b>
+                                <div><p id="email" data-type="email"><%= employeeProfileDetails.email %></p></div>
+                            </li>
+                        
+                            <li class="list-group-item">
+                                <b>Website : </b>
+                                <div>
+                                    <p id="url" data-type="url"><%= employeeProfileDetails.website %></p>
+                                </div>
+                            </li>
+                        
+                            <li class="list-group-item">
+                                <b>Research Interests:</b>
+                                <div>
+                                    <p id="researchInterests" data-type="textarea"><%= employeeProfileDetails.researchInterests %></p>
+                                </div>    
+                            </li>    
+
+                        </ul>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-9">
+                <div class="row mx-3 my-4">
+
+                    <div class="card shadow-sm" style="width: 100%;">
+                        <ul class="list-group list-group-flush">
+                            
+                            <li class="list-group-item">
+                                <b>Background : </b>
+                                <div><p id="background" data-type="textarea"><%= employeeProfileDetails.background %></p></div>
+                            </li>
+        
+                            <li class="list-group-item">
+                                <b>Publications : </b>
+                                
+                            </li>
+                            
+                            <li class="list-group-item">
+                                <b>Ongoing Courses :</b>
+                                
+                            </li>
+        
+                          </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            
+        </div>
+
     </div>
 
 

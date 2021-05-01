@@ -1,7 +1,10 @@
 const express = require('express')
 const dbhandler = require('../db/dbhandler')
+const mongodbhandler = require('../mongodb/mongodbhandler')
 const { prettyDate, handleGetError, getSortedApplicationEvents } = require('../utils/utils')
 const profilesRouter = express.Router()
+
+// note this section can be reached without logging in as well
 
 profilesRouter.get("/", (req, res)=>{
     res.redirect("profiles/all")
@@ -11,8 +14,17 @@ profilesRouter.get("/", (req, res)=>{
 profilesRouter.get("/all", async (req, res)=>{
     try {
 
-        let employee = await dbhandler.getEmployee(req.session.EID)
-        let specialDesignation = await dbhandler.getAssignedSpecialDesignation(req.session.EID)
+        // console.log("req.session.EID :",req.session.EID)
+
+        let employeeEID = null;
+        let employee = null;
+        let specialDesignation = null;
+
+        if (req.session.EID != undefined && req.session.EID.length != 0){
+            employeeEID = req.session.EID;
+            employee = await dbhandler.getEmployee(employeeEID)
+            specialDesignation = await dbhandler.getAssignedSpecialDesignation(employeeEID)
+        }
 
         // todo: pass relevant data to show Profile page
         
@@ -29,25 +41,37 @@ profilesRouter.get("/all", async (req, res)=>{
 profilesRouter.get("/:qeid", async (req, res)=>{
     
     try {
+        let employeeEID = null;
         let employee = null;
         let specialDesignation = null;
 
         let qeid = req.params.qeid; // query EID
 
         if (req.session.EID != undefined && req.session.EID.length != 0){
-            employee = await dbhandler.getEmployee(req.session.EID)
-            specialDesignation = await dbhandler.getAssignedSpecialDesignation(req.session.EID)
+            employeeEID = req.session.EID;
+            employee = await dbhandler.getEmployee(employeeEID)
+            specialDesignation = await dbhandler.getAssignedSpecialDesignation(employeeEID)
         }        
 
         if (qeid == undefined || qeid.length == 0){
             throw Error(`Invalid EID: ${qeid}`)
         }
 
-        // todo: pass relevant data to show Profile page
+        let profile = await dbhandler.getEmployee(qeid)
+        let profile_specialDesignation = await dbhandler.getAssignedSpecialDesignation(qeid)
+
         
+        let employeeProfileDetails = await mongodbhandler.getEmployeeDetails(qeid)
+
+        // console.log("employeeProfileDetails:", employeeProfileDetails);
         res.render("./pages/aProfile.ejs", { 
             employee: employee, 
-            specialDesignation: specialDesignation
+            specialDesignation: specialDesignation,
+           
+            profile: profile,
+            profile_specialDesignation: profile_specialDesignation,
+            employeeProfileDetails: employeeProfileDetails,
+            allowEdits: (qeid == employeeEID)
         })
 
     } catch (error) {
@@ -56,5 +80,28 @@ profilesRouter.get("/:qeid", async (req, res)=>{
 
 })
 
+
+profilesRouter.post("/:qeid", async (req, res)=>{
+    console.log("received post request at ", req.originalUrl, "\t body=", req.body)
+
+    try {
+
+        let qeid = req.params.qeid; // query EID
+
+        if (qeid == undefined || qeid.length == 0){
+            throw Error(`Invalid EID: ${qeid}`)
+        }
+        
+        let updateDict = {}
+        updateDict[req.body.name] = req.body.value.trim();
+        
+        await mongodbhandler.updateEmployeeDetails(qeid, updateDict)
+
+        res.sendStatus(200)
+    } catch (error) {
+        handleGetError(res, error)
+    }
+
+})
 
 module.exports = profilesRouter

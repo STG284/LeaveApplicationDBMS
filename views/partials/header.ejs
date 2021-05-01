@@ -7,28 +7,37 @@
         </span>
     </a>
     <span class="card flex-row flex-wrap" style="height: 130px; padding-right: inherit; min-width: 26%;">
-        <img class="my-auto" src="/images/profile.png" alt="" height="80px" width="95px">
-        <div class="card-block p-2">
-            
-            <h3 class="mx-auto d-inline"><%= employee.name %></h3>
-            <strong class="d-inline alert alert-warning p-1 float-right" style="margin-left: 20px; color: brown;"> EID: <%= employee.EID %> </strong>
-            
-            <% 
-                let desigString = null;
-                if(specialDesignation != null)
-                    desigString = specialDesignation.designation 
-                if(specialDesignation != null && specialDesignation.designation == 'Dean')
-                    desigString = desigString + ", " + specialDesignation.type_or_dept;
-            %>
-            <% if(specialDesignation != null ) %>
-                <p class="card-subtitle" style="margin-top: 5px;"><%= desigString %></p>
+        
+        <% if(employee != null) { %>
 
-            <p class="my-0">
-                <%= employee.deptName %>
-            </p> 
-            
-            <a href="/logout" class="btn-sm btn-danger float-right">Logout</a>
-        </div>
+            <img class="my-auto" src="/images/profile.png" alt="" height="80px" width="95px">
+
+            <div class="card-block p-2">
+                <h3 class="mx-auto d-inline"><%= employee.name %></h3>
+                <strong class="d-inline alert alert-warning p-1 float-right" style="margin-left: 20px; color: brown;"> EID: <%= employee.EID %> </strong>
+                
+                <% 
+                    let desigString = null;
+                    if(specialDesignation != null)
+                        desigString = specialDesignation.designation 
+                    if(specialDesignation != null && specialDesignation.designation == 'Dean')
+                        desigString = desigString + ", " + specialDesignation.type_or_dept;
+                %>
+                <% if(specialDesignation != null ) %>
+                    <p class="card-subtitle" style="margin-top: 5px;"><%= desigString %></p>
+
+                <p class="my-0">
+                    <%= employee.deptName %>
+                </p> 
+                
+                <a href="/logout" class="btn-sm btn-danger float-right">Logout</a>
+            </div>
+
+        <% } else{ %>      
+            <img class="my-auto" src="/images/profile.png" alt="" height="80px" width="95px">
+            <a href="/login" class="btn-sm btn-primary my-auto">Login</a>
+        <% } %>
+        
         <!-- <div class="w-100"></div>
         <div class="card-footer w-100 text-muted">
             FOOTER
@@ -40,46 +49,60 @@
 <nav class="navbar navbar-dark bg-primary MyLeftNavBar">
                         
     <div class="flex-column mx-auto" id="navbarsExampleDefault">
+
         <ul class="navbar-nav" style="font-size: large;">
-            <li class="nav-item">
-                <a class="nav-link" href="/employee/Dashboard">Dashboard</a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="/profiles/<%=employee.EID%>">My Profile</a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="/profiles">All Profiles</a>
-            </li>
-        
-            <% if( specialDesignation == null || specialDesignation.designation != 'Director'){ %>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/employee/NewLeaveApplication">New Leave Application</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/employee/MyLeaves">My Leaves</a>
-                </li>
-
-            <% } %>
-
             
-            <li class="nav-item">
-                <a class="nav-link" href="/employee/MyLeaveRequests">Leave Requests</a>
-            </li>
 
-            <% if(  specialDesignation != null && specialDesignation.designation == 'Director'){ %>
-
+            <% if(employee != null){ %>
                 <li class="nav-item">
-                    <a class="nav-link" href="/director/AllLeaves">All Leaves</a>
+                    <a class="nav-link" href="/employee/dashboard">Dashboard</a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href="/director/DesignationChange">Designation Change</a>
+                    <a class="nav-link" href="/profiles/<%=employee.EID%>">My Profile</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/profiles/all">All Profiles</a>
+                </li>
+                
+                <% if( specialDesignation == null || specialDesignation.designation != 'Director'){ %>
+    
+                    <li class="nav-item">
+                        <a class="nav-link" href="/employee/NewLeaveApplication">New Leave Application</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/employee/MyLeaves">My Leaves</a>
+                    </li>
+    
+                <% } %>
+    
+                <li class="nav-item">
+                    <a class="nav-link" href="/employee/MyLeaveRequests">Leave Requests</a>
+                </li>
+    
+                <% if(  specialDesignation != null && specialDesignation.designation == 'Director'){ %>
+    
+                    <li class="nav-item">
+                        <a class="nav-link" href="/director/AllLeaves">All Leaves</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/director/DesignationChange">Designation Change</a>
+                    </li>
+                <% } %>
+    
+            <% } else { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profiles/all">All Profiles</a>
                 </li>
             <% } %>
-
+            
+            
         </ul>
+        
+        
+
         
     </div>
 </nav>

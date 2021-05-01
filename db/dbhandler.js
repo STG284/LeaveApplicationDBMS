@@ -24,13 +24,17 @@ async function executeTestQuery(query) {
     }
 }
 
-async function getCountOfEmployeesWithEid(eid) {
+async function doesEmployeeExists(eid) {
     // returns 1: if eid exists, 0 if not, -1 if error!
     let finalres = -1;
     try{
         let res = await pool.query(`SELECT True from Employee WHERE eid=${eid};`);
         console.log("received results = ", res);
         finalres = res['rowCount'];
+        if(finalres > 1){
+            throw Error("Server error! 2 employee with same EID[" + eid + "] !")
+        }
+        return finalres == 1; // return true if found one Employee object with given eid
     }catch(e){
         console.error("DBMS error", e);
         finalres = -1;
@@ -55,13 +59,6 @@ async function getCountOfEmployeesWithEid(eid) {
 //     }
 //     return finalres;
 // }
-
-function sleep(ms) {
-    console.error("sleeping for " + ms + " ms")
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}   
 
 async function getEmployee(EID) {
     try{
@@ -403,7 +400,7 @@ module.exports = {
     getLeaveApplication: getLeaveApplication,
     getApplicationEvents: getApplicationEvents,
     getEmployee: getEmployee,
-    getCountOfEmployeesWithEid: getCountOfEmployeesWithEid,
+    doesEmployeeExists: doesEmployeeExists,
     getAssignedSpecialDesignation: getAssignedSpecialDesignation,
     getLeaveApplicationRoute: getLeaveApplicationRoute,
     getAllSpecialDesignations: getAllSpecialDesignations,

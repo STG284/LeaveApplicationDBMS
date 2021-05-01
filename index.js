@@ -5,7 +5,7 @@ require('./utils/preinit') // to add colors to console logging :)
 const session = require('express-session');
 
 const testroutes = require('./routes/testroute')
-const loginRoute = require('./routes/loginroute');
+const loginRouter = require('./routes/loginroute');
 const employeeRouter = require('./routes/employeeRoute')
 const leavesRouter = require('./routes/leavesRoute');
 const directorRouter = require('./routes/directorRoute');
@@ -49,8 +49,10 @@ app.get("/logout", (req, res)=>{
     res.redirect("/")
 })
 
+app.use("/profiles", profilesRouter)
 
-app.use("/login", loginRoute)
+// every router below this will not be accessible unitll user is logged in
+app.use("/login", loginRouter)
 
 // redirect to login screen if not logged in!
 app.use((req, res, next)=>{
@@ -60,7 +62,6 @@ app.use((req, res, next)=>{
         next()
     }
 })
-
 
 app.get("/", (req, res)=>{
     if(req.session.EID === undefined){
@@ -76,7 +77,5 @@ app.use("/employee", employeeRouter)
 app.use("/leaves", leavesRouter)
 
 app.use("/director", directorRouter)
-
-app.use("/profiles", profilesRouter)
 
 app.listen(3001)

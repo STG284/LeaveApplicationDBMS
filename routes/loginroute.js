@@ -22,35 +22,23 @@ loginRouter.post("/", async (req, res)=>{
         })
         //todo: replace with error message!
     }else{
-        let countOfEmployees = await dbhandler.getCountOfEmployeesWithEid(eid)
-        console.log("countOfEmployees:", countOfEmployees)
-        switch(countOfEmployees){
-            case 1: 
-                req.session.EID = eid;
-                console.log("redirecting to: " + req.query.next)
+        let doesEmployeeExists = await dbhandler.doesEmployeeExists(eid)
+        
+        if(doesEmployeeExists){
+            req.session.EID = eid;
+            console.log("redirecting to: " + req.query.next)
 
-                if(req.query.next !== undefined && req.query.next !== null)
-                    res.redirect(req.query.next)
-                else
-                    res.redirect("/employee")
-                // res.send({
-                //     "status": "success",
-                //     "messsage": ""
-                // })
-                break;
-            case 0: 
-                res.send({
-                    "status": "error",
-                    "messsage": `user with eid = ${eid} doesn't exists!`
-                })
-                break;
-            case -1: 
-                res.send({
-                    "status": "error",
-                    "messsage": "DBMS exception! :("
-                })
-                break;
+            if(req.query.next !== undefined && req.query.next !== null)
+                res.redirect(req.query.next)
+            else
+                res.redirect("/employee")
+        }else{
+            res.send({
+                "status": "error",
+                "messsage": `user with eid = ${eid} doesn't exists!`
+            })
         }
+        
     }
     
 })
