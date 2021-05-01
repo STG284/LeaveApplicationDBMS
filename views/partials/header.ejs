@@ -6,13 +6,12 @@
             ApplyForLeave
         </span>
     </a>
-    <span class="card flex-row flex-wrap" style="height: 160px; padding-right: inherit; min-width: 26%;">
+    <span class="card flex-row flex-wrap" style="height: 130px; padding-right: inherit; min-width: 26%;">
         <img class="my-auto" src="/images/profile.png" alt="" height="80px" width="95px">
         <div class="card-block p-2">
-            <p class="">
-                <h3 class="mx-auto d-inline"><%= employee.name %></h3>
-                <strong class="d-inline alert alert-warning p-1 float-right" style="margin-left: 20px; color: brown;"> EID: <%= employee.EID %> </strong>
-            </p>
+            
+            <h3 class="mx-auto d-inline"><%= employee.name %></h3>
+            <strong class="d-inline alert alert-warning p-1 float-right" style="margin-left: 20px; color: brown;"> EID: <%= employee.EID %> </strong>
             
             <% 
                 let desigString = null;
@@ -22,7 +21,7 @@
                     desigString = desigString + ", " + specialDesignation.type_or_dept;
             %>
             <% if(specialDesignation != null ) %>
-                <p class="card-subtitle"><%= desigString %></p>
+                <p class="card-subtitle" style="margin-top: 5px;"><%= desigString %></p>
 
             <p class="my-0">
                 <%= employee.deptName %>
