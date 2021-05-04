@@ -30,13 +30,16 @@ $(document).ready(function () {
         $("#researchInterests").editable({
             title: 'Enter research interests',
             url: document.URL,
-            error: onError
+            error: onError,
+            tpl:'<textarea type="textarea" style="width: 280px;">'
         });
     
         $("#background").editable({
             title: 'Enter background',
             url: document.URL,
-            error: onError
+            anim:"true",
+            error: onError,
+            tpl:'<textarea type="textarea" style="width: 680px; resize: both;" rows="7">'
         });
     }
 
