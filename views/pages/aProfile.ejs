@@ -97,23 +97,46 @@
         
                             <li class="list-group-item">
                                 <div>
-                                    <b>Publications :
-                                        <button id="addPublicationBtn" type="button" class="btn btn-primary btn-sm" style="justify-content:center; align-items:center;border-radius:8px; padding: 1.5px;"> 
-                                            <div>Add</div>
-                                        </button>
-                                    </b> 
+                                    <b>Publications :</b>
+
+                                    <button id="addPublicationBtn" type="button" class="btn btn-primary btn-sm m-2" style="border-radius:8px;"> 
+                                        <div>Add</div>
+                                    </button>
+
+                                    <button id="deletePublicationBtn" type="button" class="btn btn-danger btn-sm m-1" style="border-radius:8px;"> 
+                                        <div>Delete</div>
+                                    </button>
                                 </div>
 
-                                <div class="form-outline mb-4">
-                                    <textarea class="form-control" id="publicationArea" type="textarea" style="width: 680px; resize: both;" rows="3"></textarea>
-                                </div>
+                                <ol id="publicationsList">
+                                    
+                                    <% if (employeeProfileDetails.publications != null ){%>
+                                        <% employeeProfileDetails.publications.forEach((aPublication, index)=>{ %>
+                                            
+                                            <li class="p-2"> <%=aPublication%> </li>
+                                            
+                                        <% }) %>
+                                    <% } %>
+                                </ol>
+
+                                <div id="newPublicationContainer" class="mx-4 my-2"><p id="newPublication" data-type="textarea"></p></div>
                                 
+                                <div style="height: 20px;"></div>
+
+                                <span id="publicationRemoveConfirmContainer" class="p-2 border border-danger">
+                                    <p style="display: inline;">Remove Publication at position : </p>
+                                    <input id="publicationRemoveIndex" type="number" min="1">
+                                    <button id="publicationRemoveConfirmButton" class="btn btn-sm btn-danger my-auto">Delete</button>
+                                </span>
+
+                                <div style="height: 20px;"></div>
                             </li>
         
+                            <!-- courses code here -->
                             <li class="list-group-item">
                                 <div>
                                     <b> Ongoing Courses :
-                                        <button id="addCourseBtn" type="button" class="btn btn-primary btn-sm" style="justify-content:center; align-items:center;border-radius:8px; padding: 1.5px;"> 
+                                        <button id="addCourseBtn" type="button" class="btn btn-primary btn-sm m-2" style="border-radius:8px;">
                                             <div>Add</div>
                                         </button>
                                     </b> 

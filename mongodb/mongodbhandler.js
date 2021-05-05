@@ -70,8 +70,10 @@ async function getEmployeeDetails(EID) {
         }
         
         // create employee document of not found!
-        let results =  await collection.findOneAndUpdate({ eid: EID }, {$set:{eid: EID}}, options)
+        await collection.findOneAndUpdate({ eid: EID }, {$set:{eid: EID}}, options)
         
+        let results =  await collection.findOne({ eid: EID }, options)
+
         // console.log("results:", results)
 
         return results

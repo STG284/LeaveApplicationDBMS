@@ -39,7 +39,7 @@ profilesRouter.get("/all", async (req, res)=>{
 })
 
 profilesRouter.get("/:qeid", async (req, res)=>{
-    
+
     try {
         let employeeEID = null;
         let employee = null;
@@ -47,15 +47,20 @@ profilesRouter.get("/:qeid", async (req, res)=>{
 
         let qeid = req.params.qeid; // query EID
 
+        if (qeid == undefined || qeid.length == 0){
+            throw Error(`Invalid EID: ${qeid}`)
+        }
+
+        // auto login !!
+        // todo remove this!
+        // req.session.EID = qeid;
+
         if (req.session.EID != undefined && req.session.EID.length != 0){
             employeeEID = req.session.EID;
             employee = await dbhandler.getEmployee(employeeEID)
             specialDesignation = await dbhandler.getAssignedSpecialDesignation(employeeEID)
-        }        
-
-        if (qeid == undefined || qeid.length == 0){
-            throw Error(`Invalid EID: ${qeid}`)
         }
+        
 
         let profile = await dbhandler.getEmployee(qeid)
         let profile_specialDesignation = await dbhandler.getAssignedSpecialDesignation(qeid)
@@ -63,7 +68,7 @@ profilesRouter.get("/:qeid", async (req, res)=>{
         
         let employeeProfileDetails = await mongodbhandler.getEmployeeDetails(qeid)
 
-        // console.log("employeeProfileDetails:", employeeProfileDetails);
+        console.log("employeeProfileDetails:", employeeProfileDetails);
         res.render("./pages/aProfile.ejs", { 
             employee: employee, 
             specialDesignation: specialDesignation,
@@ -93,7 +98,16 @@ profilesRouter.post("/:qeid", async (req, res)=>{
         }
         
         let updateDict = {}
-        updateDict[req.body.name] = req.body.value.trim();
+
+        if( typeof req.body.value == "string"){
+            req.body.value = req.body.value.trim();
+        }else{
+            //it should be array of strings!
+            req.body.value = req.body.value.map((value, index)=>{
+                return value.trim()
+            })
+        }
+        updateDict[req.body.name] = req.body.value
         
         await mongodbhandler.updateEmployeeDetails(qeid, updateDict)
 
