@@ -1,8 +1,8 @@
 const { MongoClient } = require("mongodb");
 const utils = require("../utils/utils")
 
-// const dbName = "LeaveApplicationDBMS"
-const dbName = "testDB"
+const dbName = "LeaveApplicationDBMS"
+// const dbName = "testDB"
 const url = `mongodb://localhost:27017/${dbName}`;
 
 
@@ -14,6 +14,11 @@ async function updateEmployeeDetails(EID, updateDict) {
     //  and publications, courses is a list containing json objects
     //      all others are text fields
     
+    EID = parseInt(EID)
+
+    if( "EID" in updateDict){
+        throw Error("Not allowed to update EID!")
+    }
 
     const mongoclient = new MongoClient(url, {
         useUnifiedTopology: true
@@ -25,6 +30,8 @@ async function updateEmployeeDetails(EID, updateDict) {
         await mongoclient.connect()
 
         let collection = mongoclient.db().collection("Employee");
+
+        // collection.createIndex( {"EID": 1 }, { unique: true } )
 
         // this option instructs the method to create a document if no documents match the filter
         const options = { upsert: true };
@@ -50,7 +57,9 @@ async function updateEmployeeDetails(EID, updateDict) {
 }
 
 async function getEmployeeDetails(EID) {
-    // EID must not be null,
+    // EID must not be null
+
+    EID = parseInt(EID)
 
     const mongoclient = new MongoClient(url, {
         useUnifiedTopology: true
@@ -74,7 +83,7 @@ async function getEmployeeDetails(EID) {
         
         let results =  await collection.findOne({ eid: EID }, options)
 
-        // console.log("results:", results)
+        // console.log("results: for EID = " + EID, results)
 
         return results
 

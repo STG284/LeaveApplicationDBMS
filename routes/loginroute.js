@@ -21,17 +21,17 @@ loginRouter.post("/", async (req, res)=>{
             "message" : "invalid eid!"
         })
         //todo: replace with error message!
-    }else{
+    }else{        
         let doesEmployeeExists = await dbhandler.doesEmployeeExists(eid)
         
         if(doesEmployeeExists){
             req.session.EID = eid;
-            console.log("redirecting to: " + req.query.next)
+            console.log("req.query: ", req.query, "redirecting to: " + req.query.next)
 
             if(req.query.next !== undefined && req.query.next !== null)
                 res.redirect(req.query.next)
             else
-                res.redirect("/employee")
+                res.redirect(`/profiles/${req.session.EID}`)
         }else{
             res.send({
                 "status": "error",

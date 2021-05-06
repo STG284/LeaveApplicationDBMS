@@ -67,7 +67,7 @@ app.get("/", (req, res)=>{
     if(req.session.EID === undefined){
         res.redirect("/login")
     }else{
-        res.redirect("/employee")
+        res.redirect(`/profiles/${req.session.EID}`)
     }
     
 })

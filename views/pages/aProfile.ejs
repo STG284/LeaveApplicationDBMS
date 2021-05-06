@@ -68,6 +68,13 @@
                                     <p id="url" data-type="url"><%= employeeProfileDetails.website %></p>
                                 </div>
                             </li>
+
+                            <li class="list-group-item">
+                                <b>Office : </b>
+                                <div>
+                                    <p id="office" data-type="text"><%= employeeProfileDetails.office %></p>
+                                </div>
+                            </li>
                         
                             <li class="list-group-item">
                                 <b>Research Interests:</b>
@@ -95,6 +102,7 @@
                                 <div><p id="background" data-type="textarea"><%= employeeProfileDetails.background %></p></div>
                             </li>
         
+                            <!-- publications section -->
                             <li class="list-group-item">
                                 <div>
                                     <b>Publications :</b>
@@ -132,8 +140,45 @@
                                 <div style="height: 20px;"></div>
                             </li>
         
-                            <!-- courses code here -->
+                            <!-- courses section -->
                             <li class="list-group-item">
+                                <div>
+                                    <b>Courses :</b>
+
+                                    <button id="addCourseBtn" type="button" class="btn btn-primary btn-sm m-2" style="border-radius:8px;"> 
+                                        <div>Add</div>
+                                    </button>
+
+                                    <button id="deleteCourseBtn" type="button" class="btn btn-danger btn-sm m-1" style="border-radius:8px;"> 
+                                        <div>Delete</div>
+                                    </button>
+                                </div>
+
+                                <ol id="coursesList">
+                                    
+                                    <% if (employeeProfileDetails.courses != null ){%>
+                                        <% employeeProfileDetails.courses.forEach((aCourse, index)=>{ %>
+                                            
+                                            <li class="p-2"> <%=aCourse%> </li>
+                                            
+                                        <% }) %>
+                                    <% } %>
+                                </ol>
+
+                                <div id="newCourseContainer" class="mx-4 my-2"><p id="newCourse" data-type="textarea"></p></div>
+                                
+                                <div style="height: 20px;"></div>
+
+                                <span id="courseRemoveConfirmContainer" class="p-2 border border-danger">
+                                    <p style="display: inline;">Remove Course at position : </p>
+                                    <input id="courseRemoveIndex" type="number" min="1">
+                                    <button id="courseRemoveConfirmButton" class="btn btn-sm btn-danger my-auto">Delete</button>
+                                </span>
+
+                                <div style="height: 20px;"></div>
+                            </li>
+
+                            <!-- <li class="list-group-item">
                                 <div>
                                     <b> Ongoing Courses :
                                         <button id="addCourseBtn" type="button" class="btn btn-primary btn-sm m-2" style="border-radius:8px;">
@@ -146,7 +191,7 @@
                                     <textarea class="form-control" id="coursesArea" type="textarea" style="width: 680px; resize: both;" rows="3"></textarea>
                                 </div>
                                 
-                            </li>
+                            </li> -->
 
                           </ul>
                     </div>

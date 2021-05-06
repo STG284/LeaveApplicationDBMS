@@ -23,7 +23,7 @@
                     if(specialDesignation != null && specialDesignation.designation == 'Dean')
                         desigString = desigString + ", " + specialDesignation.type_or_dept;
                 %>
-                <% if(specialDesignation != null ) %>
+                <% if(desigString != null ) %>
                     <p class="card-subtitle" style="margin-top: 5px;"><%= desigString %></p>
 
                 <p class="my-0">

@@ -61,11 +61,27 @@ async function doesEmployeeExists(eid) {
 // }
 
 async function getEmployee(EID) {
+    if(EID == null)
+        throw Error("EID must not be null or undefined!")
     try{
         let result = await pool.query(`
             SELECT * FROM Employee
             WHERE EID = ${EID};`)
         return parseEmployees(result['rows'])[0]
+    } catch (e) {
+        console.error(e.stack)
+        throw(e) //rethrowing error to let the router catch and return error message
+    }
+}
+
+// all employees except system profile (which has eid=-1)
+async function getAllEmployees() {
+    try{
+        let result = await pool.query(`
+            SELECT * FROM Employee
+            WHERE EID <> -1 
+            ORDER BY EID ASC;`)
+        return parseEmployees(result['rows'])
     } catch (e) {
         console.error(e.stack)
         throw(e) //rethrowing error to let the router catch and return error message
@@ -207,6 +223,8 @@ async function getAllLeaves() {
 
 async function getAssignedSpecialDesignation(EID) {
     try{
+        if(EID == null)
+            throw Error("EID must not be null or undefined!")
         let result = await pool.query(`
             SELECT * from SpecialDesignation
                 WHERE EID = ${EID}
@@ -400,6 +418,7 @@ module.exports = {
     getLeaveApplication: getLeaveApplication,
     getApplicationEvents: getApplicationEvents,
     getEmployee: getEmployee,
+    getAllEmployees: getAllEmployees,
     doesEmployeeExists: doesEmployeeExists,
     getAssignedSpecialDesignation: getAssignedSpecialDesignation,
     getLeaveApplicationRoute: getLeaveApplicationRoute,

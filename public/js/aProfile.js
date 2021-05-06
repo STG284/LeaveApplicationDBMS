@@ -6,9 +6,14 @@ $(document).ready(function () {
     $("#addPublicationBtn").hide();
     $("#deletePublicationBtn").hide()
 
-
     $("#newPublicationContainer").hide();
     $("#publicationRemoveConfirmContainer").hide()
+
+    $("#addCourseBtn").hide();
+    $("#deleteCourseBtn").hide()
+
+    $("#newCourseContainer").hide();
+    $("#courseRemoveConfirmContainer").hide()
 
     //Flag helps to understand whether the textarea under publication
     //needs to be shown or not
@@ -45,11 +50,27 @@ $(document).ready(function () {
         return null;
     }
 
+    async function postAllCoursesToServer() {
+        var allCourses = [];
+        $("#coursesList li").each(function () { allCourses.push($(this).text().trim()) });
+
+        try {
+            console.log("pushing: ", allCourses)
+            await $.post(url = document.URL, { name: 'courses', value: allCourses })
+        } catch (error) {
+            return "ERROR!: " + error
+        }
+        return null;
+    }
+
     // call this when user has rights to edit the profile
     function makeEverythingEditable() {
 
         $("#addPublicationBtn").show();
         $("#deletePublicationBtn").show()
+
+        $("#addCourseBtn").show();
+        $("#deleteCourseBtn").show()
 
         $("#email").editable({
             title: 'Enter email',
@@ -59,6 +80,12 @@ $(document).ready(function () {
 
         $("#url").editable({
             title: 'Enter url',
+            url: document.URL,
+            error: onError
+        });
+
+        $("#office").editable({
+            title: 'Enter office address',
             url: document.URL,
             error: onError
         });
@@ -103,6 +130,31 @@ $(document).ready(function () {
             tpl: '<textarea type="textarea" style="width: 630px; resize: both;" rows="7">'
         });
 
+        $("#newCourse").editable({
+            title: 'New Course:',
+            anim: "true",
+            emptytext: "Add new course here",
+            success: async function (response, newValue) {
+
+                let newIndex = $("#coursesList li").length;
+
+                $("#coursesList").append(`<li class="p-2"> ${newValue} </li>`)
+                let res = await postAllCoursesToServer()
+
+                if (res != null) {
+                    console.error(res)
+                    return res
+                }
+
+                $("#newCourse").editable('setValue', '');
+
+                $("#newCourseContainer").hide()
+                $("#addCourseBtn").show()
+            },
+            error: onError,
+            tpl: '<textarea type="textarea" style="width: 630px; resize: both;" rows="7">'
+        });
+
 
         // __________________ setting up Publication UI here __________________
 
@@ -111,23 +163,6 @@ $(document).ready(function () {
         $("#addPublicationBtn").click(function () {
             $("#newPublicationContainer").show()
             $("#addPublicationBtn").hide()
-        })
-
-        //function which works on clicking the Add button in front of the publication
-        $("#addCourseBtn").click(function () {
-            console.log("Add Course button clicked");
-            var x = "Add New Course";
-            var y = "BYE";
-            if (flagCourse % 2 == 0) {
-                $("#coursesArea").show();
-                flagCourse = 1;
-                document.getElementById("coursesArea").innerHTML = x;
-            }
-            else {
-                $("#coursesArea").hide();
-                document.getElementById("coursesArea").innerHTML = y;
-                flagCourse = 0;
-            }
         })
 
         $("#deletePublicationBtn").click(() => {
@@ -164,7 +199,44 @@ $(document).ready(function () {
 
         // __________________ setting up Courses UI here __________________
         
-        // todo
+        // display newCourseEditable and hide the add new button
+        $("#addCourseBtn").click(function () {
+            $("#newCourseContainer").show()
+            $("#addCourseBtn").hide()
+        })
+
+        $("#deleteCourseBtn").click(() => {
+            $("#courseRemoveConfirmContainer").show()
+            $("#deleteCourseBtn").hide()
+        })
+
+        $("#courseRemoveConfirmButton").click(async () => {
+            
+            // to remove course at given index from UI as well from backend
+
+            let index = $("#courseRemoveIndex").val()
+            index--; // imp as list index is 0-based
+            var allCourses = [];
+            $("#coursesList li").each(function () { allCourses.push($(this).text()) });
+
+            if (index < 0 && index >= allCourses.length)
+                return;
+
+            allCourses.splice(index, 1)
+
+            $("#coursesList li").eq(index).remove()
+
+            let res = await postAllCoursesToServer()
+
+            $("#courseRemoveConfirmContainer").hide()
+            $("#deleteCourseBtn").show()
+
+            if (res != null) {
+                console.error(res)
+                return res
+            }
+        })
+   
     }
 
     
