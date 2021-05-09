@@ -118,6 +118,10 @@ profilesRouter.post("/:qeid", async (req, res) => {
 
         let updateDict = {}
 
+        if(req.body.value == null){
+            req.body.value = []
+        }
+
         if (typeof req.body.value == "string") {
             req.body.value = req.body.value.trim();
         } else {
